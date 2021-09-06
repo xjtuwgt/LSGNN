@@ -222,20 +222,15 @@ if __name__ == '__main__':
         print('{}\t{}'.format(key, value))
     print('*' * 90)
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # ## Step 1: wiki-hop data tokenization
-    # wikihop_train_dev_tokenize(args=args)
+    ## Step 1: wiki-hop data tokenization
+    wikihop_train_dev_tokenize(args=args)
 
-    wikihop_train_dev_roberta_tokenize(args=args)
-    wikihop_train_dev_roberta_decoder(args=args)
-
-    ## Step 2: model preprocess
+    # ## Step 2: model preprocess
     # restore_fast_text_word_embeddings(args=args)
     # restore_glove_word_embeddings(args=args)
-
-    ## Step 3: dump-features: tokens map to ids
+    #
+    # ## Step 3: dump-features: tokens map to ids
     # wikihop_train_dev_decoder(args=args)
-
-
 
     # # Step 3: data analysis
     # wikihop_data_analysis(args=args)
