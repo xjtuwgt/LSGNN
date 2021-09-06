@@ -215,7 +215,7 @@ if __name__ == '__main__':
     parser.add_argument('--decode_dev_name', type=str, default='dev.features.pkl.gz')
     parser.add_argument('--fasttext_model', type=str, default='wiki-news-300d-1M.vec') #'wiki-news-300d-1M-subword.vec'
     parser.add_argument('--glove_model', type=str, default='glove.840B.300d')
-    parser.add_argument('--word_embed_type', type=str, default='roberta_large')
+    parser.add_argument('--word_embed_type', type=str, default='fasttext')
     parser.add_argument('--roberta_model', type=str, default='roberta-large')
     args = parser.parse_args()
     for key, value in vars(args).items():
