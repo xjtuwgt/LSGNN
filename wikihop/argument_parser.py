@@ -151,7 +151,7 @@ def default_parser():
     parser.add_argument('--eval_interval_ratio', type=float, default=0.5,
                         help="evaluate every X updates steps.")
 
-    parser.add_argument("--optimizer", type=str, default="AdamW", choices=["AdamW", "RAdam"],
+    parser.add_argument("--optimizer", type=str, default="RAdam", choices=["AdamW", "RAdam"],
                         help="Choose the optimizer to use. Default RecAdam.")
     parser.add_argument("--lr_scheduler", type=str, default="cosine", choices=["linear", "cosine", "cosine_restart"],
                         help="Choose the optimizer to use. Default RecAdam.")
