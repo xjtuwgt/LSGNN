@@ -148,7 +148,7 @@ def default_parser():
                         help="Linear warmup over warmup_steps.")
     parser.add_argument('--logging_steps', type=int, default=10,
                         help="Log every X updates steps.")
-    parser.add_argument('--eval_interval_ratio', type=float, default=0.5,
+    parser.add_argument('--eval_interval_ratio', type=float, default=0.25,
                         help="evaluate every X updates steps.")
 
     parser.add_argument("--optimizer", type=str, default="RAdam", choices=["AdamW", "RAdam"],
