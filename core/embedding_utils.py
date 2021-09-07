@@ -98,13 +98,15 @@ class PositionEmbedding(nn.Module):
         position = torch.arange(self.max_position).unsqueeze(1)
         div_term = torch.exp(torch.arange(0, self.hidden_dim, 2) * (-math.log(10000.0) / self.hidden_dim))
         pe = torch.zeros(self.max_position, 1, self.hidden_dim)
-        pe[:, 0, 0::2] = torch.sin(position * div_term)
-        pe[:, 0, 1::2] = torch.cos(position * div_term)
+        gain = 2.0 / (self.hidden_dim + 4.0 * self.hidden_dim)
+        pe[:, 0, 0::2] = torch.sin(position * div_term) * gain
+        pe[:, 0, 1::2] = torch.cos(position * div_term) * gain
         pe = pe.squeeze(dim=1)
         return pe
 
     def position_initial(self):
-        nn.init.uniform_(self.positionEmbed.weight, -1.0, 1.0)
+        gain = 2.0 / (self.hidden_dim + 4.0 * self.hidden_dim)
+        nn.init.xavier_normal_(self.positionEmbed.weight, gain=gain)
 
     def forward(self, position_ids: LongTensor):
         position_ids = position_ids.clamp_max(self.max_position-1)
