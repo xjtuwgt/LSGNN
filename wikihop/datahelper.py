@@ -12,8 +12,8 @@ class DataHelper(object):
 
     @property
     def wikihop_train_dataloader(self) -> DataLoader:
-        train_examples = load_gz_file(file_name=self.train_example_name)
-        # train_examples = load_gz_file(file_name=self.dev_example_name)
+        # train_examples = load_gz_file(file_name=self.train_example_name)
+        train_examples = load_gz_file(file_name=self.dev_example_name)
         train_data = WikihopTrainDataSet(examples=train_examples,
                                          window_size=self.config.window_size,
                                          sent_drop_prob=self.config.sent_drop_prob)
