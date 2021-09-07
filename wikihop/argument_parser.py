@@ -7,6 +7,7 @@ import random
 import numpy as np
 from os.path import join
 from envs import OUTPUT_FOLDER, HOME_DATA_FOLDER
+from core.gpu_utils import get_single_free_gpu
 
 logger = logging.getLogger(__name__)
 def boolean_string(s):
@@ -46,7 +47,14 @@ def complete_default_parser(args):
         os.environ["CUDA_VISIBLE_DEVICES"] = str(args.gpu_id)
     # set n_gpu
     if args.local_rank == -1:
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        if args.stanford:
+            if torch.cuda.is_available():
+                gpu_idx, _ = get_single_free_gpu()
+                device = torch.device("cuda:{}".format(gpu_idx) if torch.cuda.is_available() else "cpu")
+            else:
+                device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        else:
+            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         if args.data_parallel:
             args.n_gpu = torch.cuda.device_count()
         else:
@@ -103,6 +111,7 @@ def default_parser():
     parser.add_argument('--residual', type=boolean_string, default='true')
     parser.add_argument('--diff_head_tail', type=boolean_string, default='false')
     parser.add_argument('--ppr_diff', type=boolean_string, default='true')
+    parser.add_argument('--stanford', type=boolean_string, default='true')
 
     parser.add_argument('--hop_num', type=int, default=4)
     parser.add_argument('--alpha', type=float, default=0.1)
@@ -115,7 +124,7 @@ def default_parser():
     # Environment+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     parser.add_argument('--cpu_num', type=int, default=8)
     parser.add_argument("--data_parallel",
-                        default=False,
+                        default='false',
                         type=boolean_string,
                         help="use data parallel or not")
     parser.add_argument("--gpu_id", default=None, type=str, help="GPU id")
