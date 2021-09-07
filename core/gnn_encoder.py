@@ -12,6 +12,7 @@ from dgl.base import DGLError
 from torch import Tensor
 from transformers import AdamW, get_linear_schedule_with_warmup, get_cosine_schedule_with_warmup, \
     get_cosine_with_hard_restarts_schedule_with_warmup
+from core.optimizer_utils import RAdam
 
 ####################################################
 #Pre-layer norm + small initialization, https://github.com/tnq177/transformers_without_tears
@@ -92,7 +93,10 @@ class GDTEncoder(nn.Module):
                 "weight_decay": 0.0,
             }
         ]
-        optimizer = AdamW(optimizer_grouped_parameters, lr=self.config.learning_rate, eps=self.config.adam_epsilon)
+        if self.config.optimizer == 'RAdam':
+            optimizer = RAdam(optimizer_grouped_parameters, lr=self.config.learning_rate, eps=self.config.adam_epsilon)
+        else:
+            optimizer = AdamW(optimizer_grouped_parameters, lr=self.config.learning_rate, eps=self.config.adam_epsilon)
         if self.config.lr_scheduler == 'linear':
             scheduler = get_linear_schedule_with_warmup(optimizer,
                                                         num_warmup_steps=self.config.warmup_steps,
