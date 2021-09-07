@@ -79,7 +79,7 @@ class RelationEmbedding(nn.Module):
         return self.relEmbbed[idxes]
 
 class PositionEmbedding(nn.Module):
-    def __init__(self, max_position: int = 15000, hidden_dim=300, initial_type='sin_cos', freeze=True):
+    def __init__(self, max_position: int = 15000, hidden_dim=300, initial_type='sin_cos', freeze=False):
         super(PositionEmbedding, self).__init__()
         self.max_position = max_position
         self.hidden_dim = hidden_dim
