@@ -7,8 +7,12 @@ from os.path import join
 class DataHelper(object):
     def __init__(self, config):
         self.config = config
-        self.train_example_name = join(PREPROCESS_FOLDER, self.config.word_embed_type + '.' + self.config.decode_train_name)
-        self.dev_example_name = join(PREPROCESS_FOLDER, self.config.word_embed_type + '.' + self.config.decode_dev_name)
+        if self.config.customer:
+            self.train_example_name = join(PREPROCESS_FOLDER, self.config.word_embed_type + '.wikihop.' + self.config.decode_train_name)
+            self.dev_example_name = join(PREPROCESS_FOLDER, self.config.word_embed_type + '.wikihop.' + self.config.decode_dev_name)
+        else:
+            self.train_example_name = join(PREPROCESS_FOLDER, self.config.word_embed_type + '.' + self.config.decode_train_name)
+            self.dev_example_name = join(PREPROCESS_FOLDER, self.config.word_embed_type + '.' + self.config.decode_dev_name)
 
     @property
     def wikihop_train_dataloader(self) -> DataLoader:
