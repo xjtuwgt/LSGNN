@@ -8,7 +8,8 @@ from time import time
 def restore_fasttext_pretrained(pretrained_fast_text_file_name: str,
                                       dat_path_extend_name: str,
                                       word_pickle_name: str,
-                                      word2index_name: str):
+                                      word2index_name: str,
+                                      customer_word_dict: dict=None):
     """
     :param pretrained_fast_text_file_name:
     :param dat_path_extend_name:
@@ -43,7 +44,9 @@ def restore_fasttext_pretrained(pretrained_fast_text_file_name: str,
 def restore_glove_pretrained(dat_path_extend: str,
                              word_pickle_name: str,
                              word2index_name: str,
-                          pretrained_glove_file_name: str, dim=300):
+                          pretrained_glove_file_name: str,
+                             dim=300,
+                             customer_word_dict: dict=None):
     """
     :param glove_path:
     :param dat_path:
