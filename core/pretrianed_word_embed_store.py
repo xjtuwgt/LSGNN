@@ -25,20 +25,30 @@ def restore_fasttext_pretrained(pretrained_fast_text_file_name: str,
     word_count, dim = map(int, fin.readline().split())
     print(word_count, dim)
     start_time = time()
+    row_count = 0
     for line in tqdm(fin):
         tokens = line.rstrip().split(' ')
         word = tokens[0]
-        vect = np.array(tokens[1:]).astype(np.float)
-        words.append(word)
-        word2idx[word] = idx
-        idx = idx + 1
-        vectors.append(vect)
+        if customer_word_dict is not None:
+            if word in customer_word_dict:
+                vect = np.array(tokens[1:]).astype(np.float)
+                words.append(word)
+                word2idx[word] = idx
+                idx = idx + 1
+                vectors.append(vect)
+        else:
+            vect = np.array(tokens[1:]).astype(np.float)
+            words.append(word)
+            word2idx[word] = idx
+            idx = idx + 1
+            vectors.append(vect)
+        row_count = row_count + 1
     vectors = bcolz.carray(vectors[1:].reshape(word_count, dim), rootdir =
     f'{dat_path_extend_name}', mode = 'w')
     vectors.flush()
     pickle.dump(words, open(f"{word_pickle_name}", 'wb'))
     pickle.dump(word2idx, open(f"{word2index_name}", 'wb'))
-    print('Processing {} takes {:.6f}'.format(len(words), time() - start_time))
+    print('Processing {} {} takes {:.6f}'.format(row_count, len(words), time() - start_time))
 
 
 def restore_glove_pretrained(dat_path_extend: str,
@@ -60,19 +70,29 @@ def restore_glove_pretrained(dat_path_extend: str,
     idx = 0
     start_time = time()
     vectors = bcolz.carray(np.zeros(1), rootdir = f'{dat_path_extend}', mode = 'w')
+    row_count = 0
     with open(f'{pretrained_glove_file_name}', 'r') as f:
         for line in tqdm(f):
             tokens = line.rstrip().split(' ')
             word = tokens[0]
-            words.append(word)
-            word2idx[word] = idx
-            idx = idx + 1
-            vect = np.array(tokens[1:]).astype(np.float)
-            vectors.append(vect)
+            if customer_word_dict is not None:
+                if word in customer_word_dict:
+                    words.append(word)
+                    word2idx[word] = idx
+                    idx = idx + 1
+                    vect = np.array(tokens[1:]).astype(np.float)
+                    vectors.append(vect)
+            else:
+                words.append(word)
+                word2idx[word] = idx
+                idx = idx + 1
+                vect = np.array(tokens[1:]).astype(np.float)
+                vectors.append(vect)
+            row_count = row_count + 1
     word_count = idx
     vectors = bcolz.carray(vectors[1:].reshape(word_count, dim), rootdir =
     f'{dat_path_extend}', mode = 'w')
     vectors.flush()
     pickle.dump(words, open(f"{word_pickle_name}", 'wb'))
     pickle.dump(word2idx, open(f"{word2index_name}", 'wb'))
-    print('Processing {} takes {:.6f}'.format(len(words), time() - start_time))
+    print('Processing {} {} takes {:.6f}'.format(row_count, len(words), time() - start_time))
