@@ -43,7 +43,9 @@ def restore_fasttext_pretrained(pretrained_fast_text_file_name: str,
             idx = idx + 1
             vectors.append(vect)
         row_count = row_count + 1
-    vectors = bcolz.carray(vectors[1:].reshape(word_count, dim), rootdir =
+
+    word_count_ = idx
+    vectors = bcolz.carray(vectors[1:].reshape(word_count_, dim), rootdir =
     f'{dat_path_extend_name}', mode = 'w')
     vectors.flush()
     pickle.dump(words, open(f"{word_pickle_name}", 'wb'))
