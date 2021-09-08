@@ -215,7 +215,7 @@ if __name__ == '__main__':
     parser.add_argument('--decode_dev_name', type=str, default='dev.features.pkl.gz')
     parser.add_argument('--fasttext_model', type=str, default='wiki-news-300d-1M.vec') #'wiki-news-300d-1M-subword.vec'
     parser.add_argument('--glove_model', type=str, default='glove.840B.300d')
-    parser.add_argument('--word_embed_type', type=str, default='fasttext')
+    parser.add_argument('--word_embed_type', type=str, default='glove')
     parser.add_argument('--roberta_model', type=str, default='roberta-large')
     args = parser.parse_args()
     for key, value in vars(args).items():
@@ -227,7 +227,7 @@ if __name__ == '__main__':
 
     ## Step 2: model preprocess
     # restore_fast_text_word_embeddings(args=args)
-    restore_glove_word_embeddings(args=args)
+    # restore_glove_word_embeddings(args=args)
 
     ## Step 3: dump-features: tokens map to ids
     wikihop_train_dev_decoder(args=args)
