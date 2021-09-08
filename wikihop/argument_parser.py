@@ -159,7 +159,7 @@ def default_parser():
                         help="If > 0: set total number of training steps to perform. Override num_train_epochs.")
     parser.add_argument("--warmup_steps", default=0, type=int,
                         help="Linear warmup over warmup_steps.")
-    parser.add_argument('--logging_steps', type=int, default=10,
+    parser.add_argument('--logging_steps', type=int, default=20,
                         help="Log every X updates steps.")
     parser.add_argument('--eval_interval_ratio', type=float, default=0.25,
                         help="evaluate every X updates steps.")
