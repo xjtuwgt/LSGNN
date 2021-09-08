@@ -246,7 +246,7 @@ if __name__ == '__main__':
     restore_glove_word_embeddings(args=args)
 
     ## Step 3: dump-features: tokens map to ids
-    wikihop_train_dev_decoder(args=args)
+    # wikihop_train_dev_decoder(args=args)
 
     # # Step 3: data analysis
     # wikihop_data_analysis(args=args)
