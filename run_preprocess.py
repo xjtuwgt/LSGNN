@@ -67,11 +67,17 @@ def wikihop_train_dev_tokenize(args):
     print('Saving {} examples in {}'.format(len(wikihop_vocab_dict), wikihop_vocab_file_name))
 
 
-def wikihop_train_dev_decoder(args):
+def wikihop_train_dev_decoder(args, customer=True):
     if args.word_embed_type == 'fasttext':
-        word_embedder = WordEmbedding(pre_trained_name=join(PRETRAINED_MODEL_FOLDER, args.fasttext_model))
+        if customer:
+            word_embedder = WordEmbedding(pre_trained_name=join(PRETRAINED_MODEL_FOLDER, args.fasttext_model + '.wikihop'))
+        else:
+            word_embedder = WordEmbedding(pre_trained_name=join(PRETRAINED_MODEL_FOLDER, args.fasttext_model))
     elif args.word_embed_type == 'glove':
-        word_embedder = WordEmbedding(pre_trained_name=join(PRETRAINED_MODEL_FOLDER, args.glove_model))
+        if customer:
+            word_embedder = WordEmbedding(pre_trained_name=join(PRETRAINED_MODEL_FOLDER, args.glove_model + '.wikihop'))
+        else:
+            word_embedder = WordEmbedding(pre_trained_name=join(PRETRAINED_MODEL_FOLDER, args.glove_model))
     else:
         raise 'wrong word embedding type = {}'.format(args.word_embed_type)
     train_example_file_name = join(PREPROCESS_FOLDER, args.token_train_name)
@@ -240,7 +246,7 @@ if __name__ == '__main__':
     # restore_glove_word_embeddings(args=args)
 
     ## Step 3: dump-features: tokens map to ids
-    # wikihop_train_dev_decoder(args=args)
+    wikihop_train_dev_decoder(args=args)
 
     # # Step 3: data analysis
     # wikihop_data_analysis(args=args)
