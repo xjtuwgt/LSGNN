@@ -4,6 +4,7 @@ import logging
 import torch
 from tqdm import tqdm, trange
 from tensorboardX import SummaryWriter
+import gc
 from wikihop.datautils import wikihop2dictionary
 from core.embedding_utils import WordEmbedding
 from os.path import join
@@ -129,6 +130,7 @@ for epoch in train_iterator:
                 for metric in training_logs[0].keys():
                     metrics[metric] = sum([log[metric] for log in training_logs])/len(training_logs)
                 training_logs = []
+                gc.collect()
                 logging.info('Train model evaluation at step_{}/epoch_{}'.format(global_step + 1, epoch + 1))
                 for key, value in metrics.items():
                     logging.info('Metric {}: {:.5f}'.format(key, value))
@@ -140,6 +142,7 @@ for epoch in train_iterator:
             epoch_iterator.close()
             break
         # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        gc.collect()
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
         # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
