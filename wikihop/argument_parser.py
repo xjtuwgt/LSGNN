@@ -92,7 +92,7 @@ def default_parser():
     parser.add_argument('--decode_dev_name', type=str, default='dev.features.pkl.gz')
     parser.add_argument('--fasttext_model', type=str, default='wiki-news-300d-1M.vec')
     parser.add_argument('--glove_model', type=str, default='glove.840B.300d')
-    parser.add_argument('--word_embed_type', type=str, default='fasttext')
+    parser.add_argument('--word_embed_type', type=str, default='glove')
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     parser.add_argument('--relation_emb_gamma', type=float, default=0.1)
     parser.add_argument('--relation_emb_dim', type=int, default=300)
