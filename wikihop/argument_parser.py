@@ -86,6 +86,10 @@ def default_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument("--exp_name", type=str, default=None,
                         help="If set, this will be used as directory name in OUTOUT folder")
+    parser.add_argument("--config_file",
+                        type=str,
+                        default=None,
+                        help="configuration file for command parser")
     parser.add_argument('--output_dir', type=str, default=OUTPUT_FOLDER,
                         help='Directory to save model and summaries')
     parser.add_argument('--db_path', type=str, default=HOME_DATA_FOLDER)
