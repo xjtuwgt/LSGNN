@@ -47,7 +47,7 @@ def rand_search_parameter(space: dict):
         raise ValueError('Training batch mode %s not supported' % para_type)
 
 def HypeParameterSpace():
-    learning_rate = {'name': 'learning_rate', 'type': 'choice', 'values': [5e-4, 1e-5, 2e-5]} #3e-5, 5e-5, 1e-4, 1.5e-4
+    learning_rate = {'name': 'learning_rate', 'type': 'choice', 'values': [5e-4, 1e-3, 2e-4]} #3e-5, 5e-5, 1e-4, 1.5e-4
     attn_drop_ratio = {'name': 'attn_drop', 'type': 'choice', 'values': [0.3, 0.4, 0.5]}
     feat_drop_ratio = {'name': 'feat_drop', 'type': 'choice', 'values': [0.25, 0.3, 0.4]}
     sent_drop_ratio = {'name': 'sent_drop', 'type': 'choice', 'values': [0.1, 0.15]}
