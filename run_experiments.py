@@ -1,10 +1,11 @@
-from wikihop.argument_parser import default_parser, complete_default_parser
+from wikihop.argument_parser import default_parser, complete_default_parser, json_to_argv
 from wikihop.datahelper import DataHelper
 import logging
 import torch
 from tqdm import tqdm, trange
 from tensorboardX import SummaryWriter
 import gc
+import sys
 from wikihop.datautils import wikihop2dictionary
 from core.embedding_utils import WordEmbedding
 from os.path import join
@@ -23,9 +24,16 @@ logger = logging.getLogger(__name__)
 # # Initialize arguments
 # ##########################################################################
 parser = default_parser()
-args = parser.parse_args()
+logger.info("IN CMD MODE")
+logger.info("Pytorch version = {}".format(torch.__version__))
+args_config_provided = parser.parse_args(sys.argv[1:])
+if args_config_provided.config_file is not None:
+    argv = json_to_argv(args_config_provided.config_file) + sys.argv[1:]
+else:
+    argv = sys.argv[1:]
+args = parser.parse_args(argv)
+# ##########################################################################
 args = complete_default_parser(args=args)
-
 for key, value in vars(args).items():
     logging.info('{}\t{}'.format(key, value))
 logger.info("IN CMD MODE")

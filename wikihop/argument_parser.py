@@ -107,7 +107,7 @@ def default_parser():
     parser.add_argument('--position_initial_type', type=str, default='sin_cos')
     parser.add_argument('--add_position', type=boolean_string, default='true')
     parser.add_argument('--embedding_dropout', type=float, default=0.25)
-    parser.add_argument('--oov_type', type=str, default='zero')
+    parser.add_argument('--oov_type', type=str, default='rand')
     parser.add_argument('--num_relations', type=int, default=3)
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     parser.add_argument('--window_size', type=int, default=24)

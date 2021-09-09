@@ -38,6 +38,8 @@ class WordEmbedding(nn.Module):
         self.word2vec = torch.from_numpy(word2vec)
         self.wordEmbed = nn.Embedding.from_pretrained(embeddings=self.word2vec, freeze=freeze)
         self.word_count = len(self.word2idx)
+        self.oov_idx = self.word_count
+        self.pad_idx = self.word_count + 1
         print('Pre-trained embeddings loaded in {:.6f} seconds!'.format(time() - start_time))
 
     def forward(self, idxes: LongTensor):
@@ -51,8 +53,11 @@ class WordEmbedding(nn.Module):
         return word_idxs
 
     def decode_word(self, word):
-        idx = self.word2idx.get(word, self.word_count)
+        idx = self.word2idx.get(word, self.oov_idx)
         return idx
+
+    def padding_idx(self):
+        return self.pad_idx
 
 class RelationEmbedding(nn.Module):
     def __init__(self, num_relations, dim=300, gamma=0.1):
