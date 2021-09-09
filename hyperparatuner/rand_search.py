@@ -54,10 +54,10 @@ def HypeParameterSpace():
     layers_num = {'name': 'layers', 'type': 'choice', 'values': [3, 6]}
     hop_num = {'name': 'hop_num', 'type': 'choice', 'values': [3, 4, 5]}
     alpha = {'name': 'alpha', 'type': 'choice', 'values': [0.1, 0.15, 0.2]}
-    window_size = {'name': 'window_size', 'type': 'choice', 'values': [24, 128]}
+    window_size = {'name': 'window_size', 'type': 'choice', 'values': [24]}
     hidden_dim = {'name': 'hidden_dim', 'type': 'choice', 'values': [512]}
     head_num = {'name': 'head_num', 'type': 'choice', 'values': [8]}
-    num_train_epochs = {'name': 'num_train_epochs', 'type': 'choice', 'values': [30]}
+    num_train_epochs = {'name': 'num_train_epochs', 'type': 'choice', 'values': [40]}
     per_gpu_train_batch_size = {'name': 'per_gpu_train_batch_size', 'type': 'choice', 'values': [16]}
     optimizer = {'name': 'optimizer', 'type': 'choice', 'values': ['RAdam']}
     lr_scheduler = {'name': 'lr_scheduler', 'type': 'choice', 'values': ['cosine']}
