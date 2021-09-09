@@ -71,7 +71,7 @@ def HypeParameterSpace():
 def generate_random_search_bash(task_num, seed=42):
     relative_path = PROJECT_FOLDER + '/'
     json_file_path = 'configs/lsgnn/'
-    job_path = 'lsgnn/'
+    job_path = 'lsgnn_jobs/'
     #================================================
     bash_save_path = relative_path + json_file_path
     os.makedirs(bash_save_path, exist_ok=True)
