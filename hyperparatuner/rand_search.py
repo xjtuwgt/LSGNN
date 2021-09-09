@@ -58,7 +58,7 @@ def HypeParameterSpace():
     hidden_dim = {'name': 'hidden_dim', 'type': 'choice', 'values': [512]}
     head_num = {'name': 'head_num', 'type': 'choice', 'values': [8]}
     num_train_epochs = {'name': 'num_train_epochs', 'type': 'choice', 'values': [30]}
-    per_gpu_train_batch_size = {'name': 'per_gpu_train_batch_size', 'type': 'choice', 'values': [8]}
+    per_gpu_train_batch_size = {'name': 'per_gpu_train_batch_size', 'type': 'choice', 'values': [16]}
     optimizer = {'name': 'optimizer', 'type': 'choice', 'values': ['RAdam']}
     lr_scheduler = {'name': 'lr_scheduler', 'type': 'choice', 'values': ['cosine']}
     #++++++++++++++++++++++++++++++++++
