@@ -49,6 +49,8 @@ def complete_default_parser(args):
         args.fasttext_model = args.fasttext_model + '.wikihop'
         args.glove_model = args.glove_model + '.wikihop'
     # set n_gpu
+    if HOME_DATA_FOLDER.startswith('/dfs/scratch0'):
+        args.stanford = 'true'
     if args.local_rank == -1:
         if args.stanford:
             if torch.cuda.is_available():
