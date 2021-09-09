@@ -1,4 +1,5 @@
 import os
+from os.path import join
 from numpy import random
 import numpy as np
 import shutil
@@ -92,12 +93,12 @@ def generate_random_search_bash(task_num, seed=42):
                 '.a.' + str(parameter_dict['alpha']) + '.win.' + str(parameter_dict['window_size']) + \
                 '.ln.'+ str(parameter_dict['layers']) + '.hop.' + str(parameter_dict['hop_num']) + '.seed' + \
                 str(parameter_dict['seed']) + '.json'
-        with open(os.path.join(bash_save_path, config_json_file_name), 'w') as fp:
+        with open(join(bash_save_path, config_json_file_name), 'w') as fp:
             json.dump(parameter_dict, fp)
-        print('{}\n{}'.format(parameter_dict, config_json_file_name))
-        with open(jobs_path + 'lsg_' + config_json_file_name +'.sh', 'w') as rsh_i:
+        print('Save config file {} into {}'.format(config_json_file_name, bash_save_path))
+        with open(join(jobs_path, 'lsg_' + config_json_file_name +'.sh'), 'w') as rsh_i:
             command_i = "CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 run_experiments.py --config_file " + \
                         json_file_path + config_json_file_name
             rsh_i.write(command_i)
-            print('saving jobs at {}'.format(jobs_path + 'lsg_' + config_json_file_name +'.sh'))
+            print('Save job {} at {}'.format('lsg_' + config_json_file_name +'.sh', jobs_path))
     print('{} jobs have been generated'.format(task_num))
