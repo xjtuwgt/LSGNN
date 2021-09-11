@@ -19,6 +19,7 @@ class DataHelper(object):
         train_examples = load_gz_file(file_name=self.train_example_name)
         # train_examples = load_gz_file(file_name=self.dev_example_name)
         train_data = WikihopTrainDataSet(examples=train_examples,
+                                         relative_position=self.config.relative_position,
                                          window_size=self.config.window_size,
                                          sent_drop_prob=self.config.sent_drop_prob)
         # ####++++++++++++
@@ -33,6 +34,7 @@ class DataHelper(object):
     def wikihop_val_dataloader(self) -> DataLoader:
         dev_examples = load_gz_file(file_name=self.dev_example_name)
         dev_data = WikihopDevDataSet(examples=dev_examples,
+                                     relative_position=self.config.relative_position,
                                      window_size=self.config.window_size)
         dataloader = DataLoader(
             dataset=dev_data,
