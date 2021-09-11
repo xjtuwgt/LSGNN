@@ -113,7 +113,7 @@ def default_parser():
     parser.add_argument('--relation_emb_dim', type=int, default=300)
     parser.add_argument('--word_emb_dim', type=int, default=300)
     parser.add_argument('--max_position', type=int, default=15000)
-    parser.add_argument('--relative_position', type=boolean_string, default='false')
+    parser.add_argument('--relative_position', type=boolean_string, default='true')
     parser.add_argument('--position_initial_type', type=str, default='sin_cos')
     parser.add_argument('--add_position', type=boolean_string, default='true')
     parser.add_argument('--embedding_dropout', type=float, default=0.25)
