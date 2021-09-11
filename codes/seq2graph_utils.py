@@ -127,13 +127,13 @@ def graph_triple_construction(seq_len: int, start_offset: int, window_size, glob
     assert len(src) == len(dst) and len(src) == len(rel)
     return src, dst, rel, relation_num
 
-def seq2graph(sequence: list, global_idx: list, start_offset: int = 0, window_size=2, position=False) -> DGLHeteroGraph:
+def seq2graph(sequence: list, global_idx: list, position, start_offset: int = 0, window_size=2) -> DGLHeteroGraph:
     """
     :param sequence:
     :param global_idx:
+    :param position:
+    :param start_offset:
     :param window_size:
-    :param skip_step:
-    :param position
     :return:
     """
     number_of_nodes = len(sequence)

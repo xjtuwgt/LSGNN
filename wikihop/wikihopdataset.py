@@ -73,6 +73,7 @@ def sent_list_dropout(supps_ids: list, drop_ratio: float):
 class WikihopTrainDataSet(Dataset):
     def __init__(self, examples,
                  window_size: int,
+                 relative_position: bool,
                  max_ans_num: int = 80,
                  sent_drop_prob = 0.1,
                  beta_drop_scale = 1.0):
@@ -82,6 +83,7 @@ class WikihopTrainDataSet(Dataset):
         self.beta_drop_scale = beta_drop_scale
         self.window_size = window_size
         self.max_ans_num = max_ans_num
+        self.relative_position = relative_position
 
     def __len__(self):
         return len(self.examples)
@@ -112,7 +114,7 @@ class WikihopTrainDataSet(Dataset):
         ## ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         global_ids = [_ for _ in range(query_cand_len)]
         graph = seq2graph(sequence=seq_input_ids, start_offset=query_cand_len, global_idx=global_ids,
-                          window_size=self.window_size)
+                          window_size=self.window_size, position=self.relative_position)
         ## ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         cand_start_pos = torch.LongTensor(ans_start_pos)
         cand_end_pos = torch.LongTensor(ans_end_pos)
@@ -153,11 +155,13 @@ class WikihopTrainDataSet(Dataset):
 class WikihopDevDataSet(Dataset):
     def __init__(self, examples,
                  window_size: int,
+                 relative_position: bool,
                  max_ans_num: int = 80):
         self.examples = examples
         # self.examples = examples[:100] # for debug
         self.window_size = window_size
         self.max_ans_num = max_ans_num
+        self.relative_position = relative_position
 
     def __len__(self):
         return len(self.examples)
@@ -181,7 +185,7 @@ class WikihopDevDataSet(Dataset):
         ## ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         global_ids = [_ for _ in range(query_cand_len)]
         graph = seq2graph(sequence=seq_input_ids, start_offset=query_cand_len, global_idx=global_ids,
-                                  window_size=self.window_size)
+                                  window_size=self.window_size, position=self.relative_position)
         ## ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         cand_start_pos = torch.LongTensor(ans_start_pos)
         cand_end_pos = torch.LongTensor(ans_end_pos)
