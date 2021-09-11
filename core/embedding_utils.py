@@ -63,22 +63,10 @@ class RelationEmbedding(nn.Module):
     def __init__(self, num_relations, dim=300, gamma=0.1):
         super(RelationEmbedding, self).__init__()
         self.epsilon = 2.0
-        self.gamma = nn.Parameter(
-            torch.Tensor([gamma]),
-            requires_grad=False
-        )
-
-        self.embedding_range = nn.Parameter(
-            torch.Tensor([(self.gamma.item() + self.epsilon) / dim]),
-            requires_grad=False
-        )
-
+        self.gamma = gamma
+        self.gain = (self.gamma + self.epsilon) / (5.0 * dim)
         self.relEmbbed = nn.Parameter(torch.zeros(num_relations, dim))
-        nn.init.uniform_(
-            tensor=self.relEmbbed,
-            a=-self.embedding_range.item(),
-            b=self.embedding_range.item()
-        )
+        nn.init.xavier_normal_(tensor=self.relEmbbed.data, gain=self.gain)
 
     def forward(self, idxes: LongTensor):
         return self.relEmbbed[idxes]
