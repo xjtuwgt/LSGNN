@@ -176,7 +176,7 @@ for epoch in train_iterator:
                 tb_writer.add_scalar(key, value, epoch)
 
 for key, val in best_metrics.items():
-    logger.info("Current {} = {:.5f}".format(key, val))
+    logger.info("The best performance: {} = {:.5f}".format(key, val))
 
 for key, val in vars(args).items():
     print('{}\t{}'.format(key, val))
