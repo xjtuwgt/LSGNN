@@ -116,7 +116,7 @@ def graph_triple_construction(seq_len: int, start_offset: int, window_size, glob
     src_list = [sliding_src, global_src, global_dst]
     dst_list = [sliding_dst, global_dst, global_src]
     if position:
-        rel_list = [sliding_position, np.full(2 * global_len, 2 * window_size + 1, dtype=int)]
+        rel_list = [sliding_position, np.full(2 * global_len, 2 * window_size, dtype=int)]
         relation_num = 2 * window_size + 1
     else:
         rel_list = [sliding_position, np.full(2 * global_len, 2, dtype=int)]
