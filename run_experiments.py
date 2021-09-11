@@ -178,5 +178,8 @@ for epoch in train_iterator:
 for key, val in best_metrics.items():
     logger.info("Current {} = {:.5f}".format(key, val))
 
+for key, val in vars(args).items():
+    print('{}\t{}'.format(key, val))
+
 if args.local_rank in [-1, 0]:
     tb_writer.close()
