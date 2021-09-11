@@ -142,10 +142,10 @@ def seq2graph(sequence: list, global_idx: list, position, start_offset: int = 0,
     # print(src)
     # print(dst)
     # print(rel)
-    temp_matrix = np.zeros((number_of_nodes, number_of_nodes))
-    for _ in range(len(src)):
-        temp_matrix[src[_]][dst[_]] = rel[_]
-    print(temp_matrix)
+    # temp_matrix = np.zeros((number_of_nodes, number_of_nodes))
+    # for _ in range(len(src)):
+    #     temp_matrix[src[_]][dst[_]] = rel[_]
+    # print(temp_matrix)
     # print(len(rel), temp_matrix.shape)
     graph = dgl.graph(num_nodes=number_of_nodes, data=(src, dst))
     node_id = torch.arange(0, number_of_nodes, dtype=torch.long)
