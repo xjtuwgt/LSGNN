@@ -4,6 +4,8 @@ import random
 from tqdm import tqdm
 import torch
 from typing import List, Tuple
+from codes.seq2graph_utils import seq2graph
+import dgl
 
 import gzip
 import pickle
@@ -19,6 +21,7 @@ class FindCatSentence(Sentence):
 class FindCatExample(ExampleWithSentences):
     target_tokens: List[int]
     positions: List[int]
+    window_size: int = 24
     label: int = 0
 
 def contains_subsequence_old(target, sequence):
@@ -71,8 +74,7 @@ class FindCatDataset(TokenizedDataset):
     def __init__(self, tokenizer_class="bert-base-uncased",
                  total_examples=1000, seqlen=(500,), vocab=VOCAB,
                  target_tokens='cat', prob=0.5,
-                 top_position=None,
-                 fixed_positions=None,
+                 window_size=24,
                  seed=42, data_file_name=None):
         super().__init__(tokenizer_class=tokenizer_class)
         random.seed(seed)
@@ -81,9 +83,8 @@ class FindCatDataset(TokenizedDataset):
         self.seqlen = seqlen
         self.vocab = vocab
         self.target_tokens = [[ord(x) - ord('a') + RESERVED_TOKENS for x in y] for y in target_tokens.split('_')]
-        self.fixed_positions = fixed_positions
         self.total_examples = total_examples
-        self.top_position = top_position
+        self.window_size = window_size
         if data_file_name is None:
             self.data = self.data_generation()
         else:
@@ -103,7 +104,7 @@ class FindCatDataset(TokenizedDataset):
                 retval[p] = target_tokens[p_i]
         return FindCatExample(
             tokenized_sentences=[FindCatSentence(sentence_idx=s_i, token_ids=[s]) for s_i, s in enumerate(retval)],
-            target_tokens=target_tokens, positions=positions, label=target)
+            target_tokens=target_tokens, window_size=self.window_size, positions=positions, label=target)
 
     def __len__(self):
         return len(self.data)
@@ -127,23 +128,33 @@ class FindCatDataset(TokenizedDataset):
         return data
 
 def find_cat_collate_fn(examples):
-    ex_lens = [3 + len(ex.target_tokens) + len(ex.tokenized_sentences) for ex in examples]
-    max_ex_len = max(ex_lens)
-
-    batched_input = np.full((len(examples), max_ex_len), -1, dtype=np.int64)
     batched_labels = np.zeros((len(examples),), dtype=np.int64)
-
+    batched_graphs = []
+    graph_cls_idxes = []
+    cls_idx = 0
+    graph_cls_idxes.append(cls_idx)
     for ex_i, ex in enumerate(examples):
-        batched_input[ex_i, :ex_lens[ex_i]] = [CLS] + ex.target_tokens + [SEP] + [s.token_ids[0] for s in
-                                                                                  ex.tokenized_sentences] + [SEP]
+        ex_input_ids = [s.token_ids[0] for s in ex.tokenized_sentences]
+        target_ids = ex.target_tokens
+        ex_sequence = [CLS] + target_ids + [SEP] + ex_input_ids
+        ex_target_len = 2 + len(target_ids)
+        ex_global_idx = [_ for _ in range(ex_target_len)]
+        ex_graph = seq2graph(sequence=ex_sequence, start_offset=ex_target_len,
+                             global_idx=ex_global_idx, window_size=ex.window_size)
+        ex_seq_len = len(ex_sequence)
+        cls_idx = cls_idx + ex_seq_len
+        graph_cls_idxes.append(cls_idx)
+        batched_graphs.append(ex_graph)
         batched_labels[ex_i] = ex.label
-
+    batched_graph = dgl.batch(batched_graphs)
     retval = {
-        'input': batched_input,
-        'labels': batched_labels
+        'input_graph': batched_graph,
+        'cls_idx': torch.LongTensor(graph_cls_idxes),
+        'labels': torch.from_numpy(batched_labels)
     }
-    retval = {k: torch.from_numpy(retval[k]) for k in retval}
     return retval
+
+
 # if __name__ == "__main__":
 #
 #     # dataset = FindCatDataset(total_examples=10)

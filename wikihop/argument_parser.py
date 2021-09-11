@@ -49,6 +49,11 @@ def complete_default_parser(args):
         args.fasttext_model = args.fasttext_model + '.wikihop'
         args.glove_model = args.glove_model + '.wikihop'
     # set n_gpu
+    # ++++++++++++++
+    if args.relative_position:
+        args.num_relations = 2 * args.window_size + 1
+        args.add_position = 'false'
+    #+++++++++++++++
     if HOME_DATA_FOLDER.startswith('/dfs/scratch0'):
         args.stanford = 'true'
     if args.local_rank == -1:
@@ -108,6 +113,7 @@ def default_parser():
     parser.add_argument('--relation_emb_dim', type=int, default=300)
     parser.add_argument('--word_emb_dim', type=int, default=300)
     parser.add_argument('--max_position', type=int, default=15000)
+    parser.add_argument('--relative_position', type=boolean_string, default='true')
     parser.add_argument('--position_initial_type', type=str, default='sin_cos')
     parser.add_argument('--add_position', type=boolean_string, default='true')
     parser.add_argument('--embedding_dropout', type=float, default=0.25)
