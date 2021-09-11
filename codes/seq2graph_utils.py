@@ -142,10 +142,10 @@ def seq2graph(sequence: list, global_idx: list, position, start_offset: int = 0,
     # print(src)
     # print(dst)
     # print(rel)
-    # temp_matrix = np.zeros((number_of_nodes, number_of_nodes))
-    # for _ in range(len(src)):
-    #     temp_matrix[src[_]][dst[_]] = rel[_]
-    # print(temp_matrix)
+    temp_matrix = np.zeros((number_of_nodes, number_of_nodes))
+    for _ in range(len(src)):
+        temp_matrix[src[_]][dst[_]] = rel[_]
+    print(temp_matrix)
     # print(len(rel), temp_matrix.shape)
     graph = dgl.graph(num_nodes=number_of_nodes, data=(src, dst))
     node_id = torch.arange(0, number_of_nodes, dtype=torch.long)
@@ -155,12 +155,12 @@ def seq2graph(sequence: list, global_idx: list, position, start_offset: int = 0,
     return graph
 
 # if __name__ == '__main__':
-#     # x = np.arange(10)
-#     # sliding_dst_array = sliding_window_view(x=x, window_shape=3)
-#     # print(sliding_dst_array)
-#     # # sliding_dst_array = sliding_window_view(x=x, window_shape=5)
-#     # # print(sliding_dst_array)
+# #     # x = np.arange(10)
+# #     # sliding_dst_array = sliding_window_view(x=x, window_shape=3)
+# #     # print(sliding_dst_array)
+# #     # # sliding_dst_array = sliding_window_view(x=x, window_shape=5)
+# #     # # print(sliding_dst_array)
 #     x = list(range(10))
-#     g = seq2graph(sequence=x, global_idx=[0,1], start_offset=2, window_size=3)
-#     # # print(g.adjacency_matrix())
-#     # print(g.number_of_edges())
+#     g = seq2graph(sequence=x, global_idx=[0,1], start_offset=2, window_size=3, position=True)
+# #     # # print(g.adjacency_matrix())
+# #     # print(g.number_of_edges())
