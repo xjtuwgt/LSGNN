@@ -52,7 +52,7 @@ def complete_default_parser(args):
     # ++++++++++++++
     if args.relative_position:
         args.num_relations = 2 * args.window_size + 1
-        args.add_position = 'false'
+        args.add_position = False
     #+++++++++++++++
     if HOME_DATA_FOLDER.startswith('/dfs/scratch0'):
         args.stanford = 'true'
