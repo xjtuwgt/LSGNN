@@ -127,7 +127,7 @@ def graph_triple_construction(seq_len: int, start_offset: int, window_size, glob
     assert len(src) == len(dst) and len(src) == len(rel)
     return src, dst, rel, relation_num
 
-def seq2graph(sequence: list, global_idx: list, start_offset: int = 0, window_size=2, position=True) -> DGLHeteroGraph:
+def seq2graph(sequence: list, global_idx: list, start_offset: int = 0, window_size=2, position=False) -> DGLHeteroGraph:
     """
     :param sequence:
     :param global_idx:
