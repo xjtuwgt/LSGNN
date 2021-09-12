@@ -131,8 +131,8 @@ def default_parser():
 
     parser.add_argument('--hop_num', type=int, default=4)
     parser.add_argument('--alpha', type=float, default=0.1)
-    parser.add_argument('--hidden_dim', type=int, default=768)
-    parser.add_argument('--head_num', type=int, default=12)
+    parser.add_argument('--hidden_dim', type=int, default=256)
+    parser.add_argument('--head_num', type=int, default=8)
     parser.add_argument('--layers', type=int, default=3)
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     parser.add_argument('--eval_batch_size', type=int, default=32)
