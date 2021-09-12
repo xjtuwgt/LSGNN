@@ -109,7 +109,6 @@ for epoch in train_iterator:
         # ==================================================================
         scores = model(batch)
         loss_log = loss_function(scores=scores, batch=batch)
-        del batch
         # ==================================================================
         if args.n_gpu > 1:
             for key, value in loss_log.items():
@@ -136,7 +135,7 @@ for epoch in train_iterator:
             if args.local_rank in [-1, 0] and args.logging_steps > 0 and global_step % args.logging_steps == 0:
                 metrics = {}
                 for metric in training_logs[0].keys():
-                    metrics[metric] = sum([log[metric] for log in training_logs])/len(training_logs)
+                    metrics[metric] = sum([log[metric].detach().cpu() for log in training_logs])/len(training_logs)
                 training_logs = []
                 gc.collect()
                 logging.info('Train model evaluation at step_{}/epoch_{}'.format(global_step + 1, epoch + 1))
@@ -150,6 +149,7 @@ for epoch in train_iterator:
             epoch_iterator.close()
             break
         # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        del batch
         gc.collect()
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
