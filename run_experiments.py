@@ -124,7 +124,7 @@ for epoch in train_iterator:
             loss_log['loss'].backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), args.max_grad_norm)
 
-        log = dict([(k, v.detached().cpu().item()) for k, v in loss_log.items()])
+        log = dict([(k, v.item()) for k, v in loss_log.items()])
         training_logs.append(log)
 
         if (step + 1) % args.gradient_accumulation_steps == 0:
