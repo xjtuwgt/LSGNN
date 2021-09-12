@@ -161,9 +161,12 @@ for epoch in train_iterator:
                     best_accuracy = metrics['accuracy']
                     best_metrics = metrics
                     best_predictions = predictions
-                    for key, value in best_metrics.items():
-                        logging.info('Best Metric {}: {:.5f}'.format(key, value))
+                    for key, value in metrics.items():
+                        logging.info('Current Metric {}: {:.5f}'.format(key, value))
                         tb_writer.add_scalar(key, value, epoch)
+            for key, value in best_metrics.items():
+                logging.info('Best Metric {}: {:.5f}'.format(key, value))
+                tb_writer.add_scalar(key, value, epoch)
 
     if args.local_rank == -1 or torch.distributed.get_rank() == 0:
         metrics, predictions = wikihop_model_evaluation(args=args, model=model, dataloader=dev_data_loader)
