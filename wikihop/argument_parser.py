@@ -120,7 +120,7 @@ def default_parser():
     parser.add_argument('--oov_type', type=str, default='rand')
     parser.add_argument('--num_relations', type=int, default=3)
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    parser.add_argument('--window_size', type=int, default=128)
+    parser.add_argument('--window_size', type=int, default=8)
     parser.add_argument('--sent_drop_prob', type=float, default=0.25)
     parser.add_argument('--feat_drop', type=float, default=0.3)
     parser.add_argument('--attn_drop', type=float, default=0.3)
