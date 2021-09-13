@@ -136,8 +136,9 @@ for epoch in train_iterator:
                 metrics = {}
                 for metric in training_logs[0].keys():
                     metrics[metric] = sum([log[metric] for log in training_logs])/len(training_logs)
-                training_logs = []
+                del training_logs
                 gc.collect()
+                training_logs = []
                 logging.info('Train model evaluation at step_{}/epoch_{}'.format(global_step + 1, epoch + 1))
                 for key, value in metrics.items():
                     logging.info('Metric {}: {:.5f}'.format(key, value))
