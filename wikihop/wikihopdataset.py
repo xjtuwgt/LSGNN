@@ -62,11 +62,11 @@ def sent_list_dropout(supps_ids: list, drop_ratio: float):
         drop_supps = []
         for sent_ids in supps:
             random_num = random.random()
-            if random_num > drop_ratio:
+            if random_num >= drop_ratio:
                 drop_supps.append(sent_ids)
         if len(drop_supps) > 0:
             drop_supps_ids.append(drop_supps)
-    if len(drop_supps_ids) == 0:
+    if len(drop_supps_ids) <= 2: ## drop_supps_ids
         return supps_ids
     return drop_supps_ids
 
