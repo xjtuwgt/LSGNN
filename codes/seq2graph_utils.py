@@ -156,14 +156,14 @@ def seq2graph(sequence: list, global_idx: list, position, start_offset: int = 0,
     graph.edata['e_type'] = torch.from_numpy(rel)
     return graph
 
-if __name__ == '__main__':
-#     # x = np.arange(10)
-#     # sliding_dst_array = sliding_window_view(x=x, window_shape=3)
-#     # print(sliding_dst_array)
-#     # # sliding_dst_array = sliding_window_view(x=x, window_shape=5)
-#     # # print(sliding_dst_array)
-    x = list(range(5))
-    # sliding_dst_array = sliding_window_view(x=x, window_shape=6)
-    g = seq2graph(sequence=x, global_idx=[0,1], start_offset=2, window_size=6, position=True)
-#     # # print(g.adjacency_matrix())
-#     # print(g.number_of_edges())
+# if __name__ == '__main__':
+# #     # x = np.arange(10)
+# #     # sliding_dst_array = sliding_window_view(x=x, window_shape=3)
+# #     # print(sliding_dst_array)
+# #     # # sliding_dst_array = sliding_window_view(x=x, window_shape=5)
+# #     # # print(sliding_dst_array)
+#     x = list(range(5))
+#     # sliding_dst_array = sliding_window_view(x=x, window_shape=6)
+#     g = seq2graph(sequence=x, global_idx=[0,1], start_offset=2, window_size=6, position=True)
+# #     # # print(g.adjacency_matrix())
+# #     # print(g.number_of_edges())
