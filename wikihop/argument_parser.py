@@ -180,5 +180,6 @@ def default_parser():
                         help="Choose the optimizer to use. Default RecAdam.")
     parser.add_argument("--lr_scheduler", type=str, default="cosine", choices=["linear", "cosine", "cosine_restart"],
                         help="Choose the optimizer to use. Default RecAdam.")
+    parser.add_argument("--debug", type=boolean_string, default='false')
 
     return parser

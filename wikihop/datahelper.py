@@ -14,10 +14,14 @@ class DataHelper(object):
             self.train_example_name = join(PREPROCESS_FOLDER, self.config.word_embed_type + '.' + self.config.decode_train_name)
             self.dev_example_name = join(PREPROCESS_FOLDER, self.config.word_embed_type + '.' + self.config.decode_dev_name)
 
+
+
     @property
     def wikihop_train_dataloader(self) -> DataLoader:
-        # train_examples = load_gz_file(file_name=self.train_example_name)
-        train_examples = load_gz_file(file_name=self.dev_example_name)
+        if self.config.debug:
+            train_examples = load_gz_file(file_name=self.dev_example_name)
+        else:
+            train_examples = load_gz_file(file_name=self.train_example_name)
         train_data = WikihopTrainDataSet(examples=train_examples,
                                          relative_position=self.config.relative_position,
                                          window_size=self.config.window_size,
