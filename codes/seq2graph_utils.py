@@ -18,10 +18,11 @@ def sliding_window_fast(seq_len: int, start_offset=0, window_size=24):
     sliding_seq_len = seq_len - start_offset
     if window_size >= sliding_seq_len:
         window_size = sliding_seq_len // 2 - 1
+        window_size = window_size if window_size >= 1 else 1
     seq_np = np.arange(sliding_seq_len) + start_offset
     sliding_dst_array = sliding_window_view(x=seq_np, window_shape=window_size)
     row_n, col_n = sliding_dst_array.shape
-    slide_last_idx = sliding_dst_array[-1][0] + 1
+    slide_last_idx = sliding_dst_array[row_n-1][0] + 1
     assert col_n == window_size
     src_array = sliding_dst_array[:,0].reshape(row_n, 1)
     sliding_src_array = np.repeat(src_array, col_n - 1, axis=1)
@@ -55,12 +56,13 @@ def sliding_window_with_position_fast(seq_len: int, start_offset=0, window_size=
     sliding_seq_len = seq_len - start_offset
     if window_size >= sliding_seq_len:
         window_size = sliding_seq_len // 2 - 1
+        window_size = window_size if window_size >= 1 else 1
     seq_np = np.arange(sliding_seq_len) + start_offset
     forward_position = np.arange(1, window_size).reshape(1, window_size - 1)
     backward_position = forward_position + window_size
     sliding_dst_array = sliding_window_view(x=seq_np, window_shape=window_size)
     row_n, col_n = sliding_dst_array.shape
-    slide_last_idx = sliding_dst_array[-1][0] + 1
+    slide_last_idx = sliding_dst_array[row_n - 1][0] + 1
     assert col_n == window_size
     src_array = sliding_dst_array[:,0].reshape(row_n, 1)
     sliding_src_array = np.repeat(src_array, col_n - 1, axis=1)
@@ -154,13 +156,14 @@ def seq2graph(sequence: list, global_idx: list, position, start_offset: int = 0,
     graph.edata['e_type'] = torch.from_numpy(rel)
     return graph
 
-# if __name__ == '__main__':
-# #     # x = np.arange(10)
-# #     # sliding_dst_array = sliding_window_view(x=x, window_shape=3)
-# #     # print(sliding_dst_array)
-# #     # # sliding_dst_array = sliding_window_view(x=x, window_shape=5)
-# #     # # print(sliding_dst_array)
-#     x = list(range(10))
-#     g = seq2graph(sequence=x, global_idx=[0,1], start_offset=2, window_size=3, position=True)
-# #     # # print(g.adjacency_matrix())
-# #     # print(g.number_of_edges())
+if __name__ == '__main__':
+#     # x = np.arange(10)
+#     # sliding_dst_array = sliding_window_view(x=x, window_shape=3)
+#     # print(sliding_dst_array)
+#     # # sliding_dst_array = sliding_window_view(x=x, window_shape=5)
+#     # # print(sliding_dst_array)
+    x = list(range(5))
+    # sliding_dst_array = sliding_window_view(x=x, window_shape=6)
+    g = seq2graph(sequence=x, global_idx=[0,1], start_offset=2, window_size=6, position=True)
+#     # # print(g.adjacency_matrix())
+#     # print(g.number_of_edges())
