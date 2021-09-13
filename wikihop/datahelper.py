@@ -14,8 +14,6 @@ class DataHelper(object):
             self.train_example_name = join(PREPROCESS_FOLDER, self.config.word_embed_type + '.' + self.config.decode_train_name)
             self.dev_example_name = join(PREPROCESS_FOLDER, self.config.word_embed_type + '.' + self.config.decode_dev_name)
 
-
-
     @property
     def wikihop_train_dataloader(self) -> DataLoader:
         if self.config.debug:
@@ -25,7 +23,8 @@ class DataHelper(object):
         train_data = WikihopTrainDataSet(examples=train_examples,
                                          relative_position=self.config.relative_position,
                                          window_size=self.config.window_size,
-                                         sent_drop_prob=self.config.sent_drop_prob)
+                                         sent_drop_prob=self.config.sent_drop_prob,
+                                         debug=self.config.debug)
         # ####++++++++++++
         dataloader = DataLoader(dataset=train_data,
                                 batch_size=self.config.train_batch_size,
@@ -39,7 +38,8 @@ class DataHelper(object):
         dev_examples = load_gz_file(file_name=self.dev_example_name)
         dev_data = WikihopDevDataSet(examples=dev_examples,
                                      relative_position=self.config.relative_position,
-                                     window_size=self.config.window_size)
+                                     window_size=self.config.window_size,
+                                     debug=self.config.debug)
         dataloader = DataLoader(
             dataset=dev_data,
             batch_size=self.config.eval_batch_size,
