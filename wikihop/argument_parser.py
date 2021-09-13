@@ -122,15 +122,15 @@ def default_parser():
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     parser.add_argument('--window_size', type=int, default=64)
     parser.add_argument('--sent_drop_prob', type=float, default=0.1)
-    parser.add_argument('--feat_drop', type=float, default=0.3)
-    parser.add_argument('--attn_drop', type=float, default=0.3)
+    parser.add_argument('--feat_drop', type=float, default=0.25)
+    parser.add_argument('--attn_drop', type=float, default=0.4)
     parser.add_argument('--residual', type=boolean_string, default='true')
     parser.add_argument('--diff_head_tail', type=boolean_string, default='false')
     parser.add_argument('--ppr_diff', type=boolean_string, default='true')
     parser.add_argument('--stanford', type=boolean_string, default='true')
 
     parser.add_argument('--hop_num', type=int, default=3)
-    parser.add_argument('--alpha', type=float, default=0.1)
+    parser.add_argument('--alpha', type=float, default=0.15)
     parser.add_argument('--hidden_dim', type=int, default=512)
     parser.add_argument('--head_num', type=int, default=8)
     parser.add_argument('--layers', type=int, default=3)
