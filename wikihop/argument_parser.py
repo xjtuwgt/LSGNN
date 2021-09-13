@@ -129,7 +129,7 @@ def default_parser():
     parser.add_argument('--ppr_diff', type=boolean_string, default='true')
     parser.add_argument('--stanford', type=boolean_string, default='true')
 
-    parser.add_argument('--hop_num', type=int, default=3)
+    parser.add_argument('--hop_num', type=int, default=4)
     parser.add_argument('--alpha', type=float, default=0.15)
     parser.add_argument('--hidden_dim', type=int, default=512)
     parser.add_argument('--head_num', type=int, default=8)
