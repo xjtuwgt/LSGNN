@@ -87,9 +87,9 @@ def wikihop_train_dev_decoder(args, customer=True):
     else:
         processed_train_data_name = join(PREPROCESS_FOLDER, args.word_embed_type + '.' + args.decode_train_name)
     train_examples = wikihop_dump_features(example_file_name=train_example_file_name, word_embedder=word_embedder, add_special_token=args.add_special_token)
-    # with gzip.open(processed_train_data_name, 'wb') as fout:
-    #     pickle.dump(train_examples, fout)
-    # print('Saving {} examples in {}'.format(len(train_examples), processed_train_data_name))
+    with gzip.open(processed_train_data_name, 'wb') as fout:
+        pickle.dump(train_examples, fout)
+    print('Saving {} examples in {}'.format(len(train_examples), processed_train_data_name))
 
     dev_example_file_name = join(PREPROCESS_FOLDER, args.token_dev_name)
     if customer:
@@ -97,9 +97,9 @@ def wikihop_train_dev_decoder(args, customer=True):
     else:
         processed_dev_data_name = join(PREPROCESS_FOLDER, args.word_embed_type + '.' + args.decode_dev_name)
     dev_examples = wikihop_dump_features(example_file_name=dev_example_file_name, word_embedder=word_embedder, add_special_token=args.add_special_token)
-    # with gzip.open(processed_dev_data_name, 'wb') as fout:
-    #     pickle.dump(dev_examples, fout)
-    # print('Saving {} examples in {}'.format(len(dev_examples), processed_dev_data_name))
+    with gzip.open(processed_dev_data_name, 'wb') as fout:
+        pickle.dump(dev_examples, fout)
+    print('Saving {} examples in {}'.format(len(dev_examples), processed_dev_data_name))
 
 
 def wikihop_train_dev_roberta_decoder(args):
