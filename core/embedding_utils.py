@@ -46,10 +46,6 @@ def load_pretrained_embedding_ndarray(embeding_file_name: str, dim=300,
     special_token_dict = {_[0]: _[1] for _ in special_tokens}
     word2vec = np.vstack((vectors, defaut_vector, zeros_vector, special_token_vectors)).astype('float32', casting= 'same_kind')
     print('Loading word2vec {} from {} takes {:.6f} seconds'.format(word2vec.shape, embeding_file_name, time() - start_time))
-    for key, value in word2idx.items():
-        if value == len(word2idx):
-            print(key, value)
-
     assert word2vec.shape[0] == len(word2idx)
     return (word2vec, word2idx, vocab_size, special_token_dict)
 
@@ -63,10 +59,9 @@ class WordEmbedding(nn.Module):
             load_pretrained_embedding_ndarray(pre_trained_name, self.dim, self.oov_default)
         self.word2vec = torch.from_numpy(word2vec)
         self.wordEmbed = nn.Embedding.from_pretrained(embeddings=self.word2vec, freeze=freeze)
-        self.word_count = len(self.word2idx)
         self.oov_idx = vocab_size
         self.pad_idx = vocab_size + 1
-        assert self.word2vec.shape[0] == self.word_count
+        assert self.word2vec.shape[0] == len(self.word2idx)
         print('Pre-trained embeddings {} loaded in {:.6f} seconds!'.format(word2vec.shape, time() - start_time))
 
     def forward(self, idxes: LongTensor):
@@ -76,7 +71,7 @@ class WordEmbedding(nn.Module):
         return [self.decode_words(words) for words in words_list]
 
     def decode_words(self, words):
-        word_idxs = [self.word2idx.get(word, self.word_count) for word in words]
+        word_idxs = [self.word2idx.get(word, self.oov_idx) for word in words]
         return word_idxs
 
     def decode_word(self, word):
