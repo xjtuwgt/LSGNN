@@ -184,7 +184,6 @@ def restore_glove_word_embeddings(args, customer=True):
                              dim=300, customer_word_dict=wikihop_vocab_dict)
 
 def wikihop_data_analysis(args):
-
     processed_train_data_name = join(PREPROCESS_FOLDER, args.word_embed_type + '.' + args.decode_train_name)
     processed_dev_data_name = join(PREPROCESS_FOLDER, args.word_embed_type + '.' + args.decode_dev_name)
     train_data = load_gz_file(processed_train_data_name)
