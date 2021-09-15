@@ -4,6 +4,7 @@ from wikihop.datautils import wikihop_example_extraction, wikihop_dump_features
 from core.pretrianed_word_embed_store import restore_fasttext_pretrained, restore_glove_pretrained
 from core.embedding_utils import load_pretrained_embedding_ndarray
 import gzip, pickle
+from wikihop.argument_parser import boolean_string
 from envs import HOME_DATA_FOLDER, PRETRAINED_MODEL_FOLDER, PREPROCESS_FOLDER
 import argparse
 import itertools
@@ -85,7 +86,7 @@ def wikihop_train_dev_decoder(args, customer=True):
         processed_train_data_name = join(PREPROCESS_FOLDER, args.word_embed_type + '.wikihop.' + args.decode_train_name)
     else:
         processed_train_data_name = join(PREPROCESS_FOLDER, args.word_embed_type + '.' + args.decode_train_name)
-    train_examples = wikihop_dump_features(example_file_name=train_example_file_name, word_embedder=word_embedder)
+    train_examples = wikihop_dump_features(example_file_name=train_example_file_name, word_embedder=word_embedder, add_special_token=args.add_special_token)
     # with gzip.open(processed_train_data_name, 'wb') as fout:
     #     pickle.dump(train_examples, fout)
     # print('Saving {} examples in {}'.format(len(train_examples), processed_train_data_name))
@@ -95,7 +96,7 @@ def wikihop_train_dev_decoder(args, customer=True):
         processed_dev_data_name = join(PREPROCESS_FOLDER, args.word_embed_type + '.wikihop.' + args.decode_dev_name)
     else:
         processed_dev_data_name = join(PREPROCESS_FOLDER, args.word_embed_type + '.' + args.decode_dev_name)
-    dev_examples = wikihop_dump_features(example_file_name=dev_example_file_name, word_embedder=word_embedder)
+    dev_examples = wikihop_dump_features(example_file_name=dev_example_file_name, word_embedder=word_embedder, add_special_token=args.add_special_token)
     # with gzip.open(processed_dev_data_name, 'wb') as fout:
     #     pickle.dump(dev_examples, fout)
     # print('Saving {} examples in {}'.format(len(dev_examples), processed_dev_data_name))
@@ -239,7 +240,7 @@ if __name__ == '__main__':
     parser.add_argument('--glove_model', type=str, default='glove.840B.300d')
     parser.add_argument('--word_embed_type', type=str, default='fasttext')
     parser.add_argument('--roberta_model', type=str, default='roberta-large')
-    parser.add_argument('--add_special_token', type=bool, default=True)
+    parser.add_argument('--add_special_token', type=boolean_string, default='true')
     args = parser.parse_args()
     for key, value in vars(args).items():
         print('{}\t{}'.format(key, value))
