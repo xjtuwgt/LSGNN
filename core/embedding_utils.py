@@ -28,7 +28,7 @@ def load_pretrained_embedding_ndarray(embeding_file_name: str, dim=300,
     return (word2vec, word2idx)
 
 class WordEmbedding(nn.Module):
-    def __init__(self, pre_trained_name: str, oov_default='zero', dim=300, freeze=False):
+    def __init__(self, pre_trained_name: str, oov_default='zero', dim=300, freeze=True):
         super(WordEmbedding, self).__init__()
         self.oov_default = oov_default
         self.dim = dim
