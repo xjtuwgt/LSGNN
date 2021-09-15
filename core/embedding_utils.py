@@ -107,10 +107,11 @@ class PositionEmbedding(nn.Module):
 
 class SeqGNNNodeEmbedding(nn.Module):
     def __init__(self, pre_trained_name: str, oov_default='zero', pos_initial_type='sin_cos',
-                 max_position: int = 15000, hidden_dim=300, add_position=True):
+                 max_position: int = 15000, hidden_dim=300, add_position=True, word_emb_freeze=True):
         super(SeqGNNNodeEmbedding, self).__init__()
         self.add_position = add_position
-        self.word_embedding = WordEmbedding(pre_trained_name=pre_trained_name, oov_default=oov_default, dim=hidden_dim)
+        self.word_embedding = WordEmbedding(pre_trained_name=pre_trained_name,
+                                            oov_default=oov_default, dim=hidden_dim, freeze=word_emb_freeze)
         if self.add_position:
             self.position_embedding = PositionEmbedding(max_position=max_position, hidden_dim=hidden_dim,
                                                         initial_type=pos_initial_type)

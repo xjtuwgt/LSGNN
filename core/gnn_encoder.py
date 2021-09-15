@@ -29,12 +29,13 @@ class GDTEncoder(nn.Module):
             self.word_embed_file_name = self.config.fasttext_model
         else:
             raise '{} is not supported'.format(self.word_embed_file_name)
-        self.node_embedder = SeqGNNNodeEmbedding(pre_trained_name=join(self.config.db_path, 'models', self.word_embed_file_name),
+        self.node_embedder = SeqGNNNodeEmbedding(pre_trained_name=join(self.config.db_path, 'models', self.word_embed_type),
                                              oov_default=self.config.oov_type,
                                              hidden_dim=self.config.word_emb_dim,
                                              max_position=self.config.max_position,
                                              pos_initial_type=self.config.position_initial_type,
-                                             add_position=self.config.add_position)
+                                             add_position=self.config.add_position,
+                                             word_emb_freeze=self.config.word_emb_freeze)
 
         self.edge_embedder = RelationEmbedding(num_relations=self.config.num_relations,
                                                dim=self.config.relation_emb_dim,
