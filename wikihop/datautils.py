@@ -68,7 +68,7 @@ def wikihop_example_extraction(data: list):
         examples[case_id] = (query_tokens, candidates_tokens, supports_tokens, answer_label_idx)
     return examples
 
-def wikihop_dump_features(example_file_name: str, word_embedder: WordEmbedding):
+def wikihop_dump_features(example_file_name: str, word_embedder: WordEmbedding, add_special_token=True):
     def example2sequence(query_tokens, cands_tokens, supports_tokens):
         query_ids = word_embedder.decode_word2d_list(words_list=query_tokens) ## list of list[int]
         cands_ids = word_embedder.decode_word2d_list(words_list=cands_tokens) ## list of list[int]
@@ -79,18 +79,18 @@ def wikihop_dump_features(example_file_name: str, word_embedder: WordEmbedding):
     feature_examples = []
     for example_id, example_values in tqdm(examples.items()):
         query_tokens, candidates_tokens, supports_tokens, answer_label_idx = example_values
-        #+++++++++++
-        query_tokens[0] = [word_embedder.special_token_dict['query_start']] + query_tokens[0]
-        query_tokens[-1] = query_tokens[-1] + [word_embedder.special_token_dict['query_end']]
-        candidates_tokens = [[word_embedder.special_token_dict['entity_start']] + candidate +
-                             [word_embedder.special_token_dict['entity_end']] for candidate in candidates_tokens]
-        for i in range(len(supports_tokens)):
-            for j in range(len(supports_tokens[i])):
-                supports_tokens[i][j] = supports_tokens[i][j] + [word_embedder.special_token_dict['sep_token']]
-        #+++++++++++
+        if add_special_token:
+            #+++++++++++
+            query_tokens[0] = [word_embedder.special_token_dict['query_start']] + query_tokens[0]
+            query_tokens[-1] = query_tokens[-1] + [word_embedder.special_token_dict['query_end']]
+            candidates_tokens = [[word_embedder.special_token_dict['entity_start']] + candidate +
+                                 [word_embedder.special_token_dict['entity_end']] for candidate in candidates_tokens]
+            for i in range(len(supports_tokens)):
+                for j in range(len(supports_tokens[i])):
+                    supports_tokens[i][j] = supports_tokens[i][j] + [word_embedder.special_token_dict['sep_token']]
+            #+++++++++++
         query_ids, cands_ids, supps_ids = example2sequence(query_tokens=query_tokens, cands_tokens=candidates_tokens,
                                                            supports_tokens=supports_tokens)
-        print(query_ids)
         example_i = {'id': example_id, 'q_ids': query_ids, 'cand_ids': cands_ids, 'doc_ids': supps_ids, 'ans_idx': answer_label_idx}
         feature_examples.append(example_i)
     return feature_examples
