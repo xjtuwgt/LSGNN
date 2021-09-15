@@ -33,10 +33,13 @@ def load_pretrained_embedding_ndarray(embeding_file_name: str, dim=300,
     vectors = bcolz.open(f'{embeding_file_name}.dat')[:]
     word2idx = pickle.load(open(f'{embeding_file_name}.idx.pkl', 'rb'))
     vocab_size = len(word2idx)
+    assert UNKNOWN not in word2idx
+    assert PAD_TOKEN not in word2idx
     word2idx[UNKNOWN] = vocab_size
     word2idx[PAD_TOKEN] = vocab_size + 1
     word_num = len(word2idx)
     for idx, special_word_pair in enumerate(special_tokens):
+        assert special_word_pair[1] not in word2idx
         word2idx[special_word_pair[1]] = word_num + idx
     special_token_vectors = np.random.uniform(-0.1, 0.1, (len(special_tokens), dim))
     special_token_dict = {_[0]: _[1] for _ in special_tokens}
