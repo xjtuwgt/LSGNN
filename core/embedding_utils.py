@@ -14,8 +14,8 @@ ENTITY_END = '[\E]'
 SEP_TOKEN = '[S]'
 UNKNOWN = '[UNK]'
 PAD_TOKEN = '[PAD]'
-SPECIAL_TOKENS = [('query_start', QUERY_START), ('query_end', QUERY_END), ('entity_start', ENTITY_START),
-                  ('entity_end', ENTITY_END), ('sep_token', SEP_TOKEN)]
+SPECIAL_TOKENS = (('query_start', QUERY_START), ('query_end', QUERY_END), ('entity_start', ENTITY_START),
+                  ('entity_end', ENTITY_END), ('sep_token', SEP_TOKEN))
 def load_pretrained_embedding_ndarray(embeding_file_name: str, dim=300,
                                      oov_default='zero', special_tokens=SPECIAL_TOKENS)->(np.ndarray, dict):
     """

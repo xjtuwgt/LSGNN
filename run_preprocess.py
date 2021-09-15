@@ -86,9 +86,9 @@ def wikihop_train_dev_decoder(args, customer=True):
     else:
         processed_train_data_name = join(PREPROCESS_FOLDER, args.word_embed_type + '.' + args.decode_train_name)
     train_examples = wikihop_dump_features(example_file_name=train_example_file_name, word_embedder=word_embedder)
-    with gzip.open(processed_train_data_name, 'wb') as fout:
-        pickle.dump(train_examples, fout)
-    print('Saving {} examples in {}'.format(len(train_examples), processed_train_data_name))
+    # with gzip.open(processed_train_data_name, 'wb') as fout:
+    #     pickle.dump(train_examples, fout)
+    # print('Saving {} examples in {}'.format(len(train_examples), processed_train_data_name))
 
     dev_example_file_name = join(PREPROCESS_FOLDER, args.token_dev_name)
     if customer:
@@ -96,9 +96,9 @@ def wikihop_train_dev_decoder(args, customer=True):
     else:
         processed_dev_data_name = join(PREPROCESS_FOLDER, args.word_embed_type + '.' + args.decode_dev_name)
     dev_examples = wikihop_dump_features(example_file_name=dev_example_file_name, word_embedder=word_embedder)
-    with gzip.open(processed_dev_data_name, 'wb') as fout:
-        pickle.dump(dev_examples, fout)
-    print('Saving {} examples in {}'.format(len(dev_examples), processed_dev_data_name))
+    # with gzip.open(processed_dev_data_name, 'wb') as fout:
+    #     pickle.dump(dev_examples, fout)
+    # print('Saving {} examples in {}'.format(len(dev_examples), processed_dev_data_name))
 
 
 def wikihop_train_dev_roberta_decoder(args):
@@ -248,11 +248,11 @@ if __name__ == '__main__':
     # wikihop_train_dev_tokenize(args=args)
     #
     # ## Step 2: model preprocess
-    restore_fast_text_word_embeddings(args=args)
-    restore_glove_word_embeddings(args=args)
+    # restore_fast_text_word_embeddings(args=args)
+    # restore_glove_word_embeddings(args=args)
 
     # Step 3: dump-features: tokens map to ids
-    # wikihop_train_dev_decoder(args=args)
+    wikihop_train_dev_decoder(args=args)
     # args.word_embed_type = 'glove'
     # wikihop_train_dev_decoder(args=args)
 
