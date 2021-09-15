@@ -8,9 +8,9 @@ import pickle #Parrallel precessing
 from torch import nn
 
 QUERY_START = '[Q]'
-QUERY_END = '[\Q]'
+QUERY_END = '[/Q]'
 ENTITY_START = '[E]'
-ENTITY_END = '[\E]'
+ENTITY_END = '[/E]'
 SEP_TOKEN = '[S]'
 UNKNOWN = '[UNK]'
 PAD_TOKEN = '[PAD]'
