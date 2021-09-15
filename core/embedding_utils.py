@@ -45,6 +45,9 @@ def load_pretrained_embedding_ndarray(embeding_file_name: str, dim=300,
     special_token_dict = {_[0]: _[1] for _ in special_tokens}
     word2vec = np.vstack((vectors, defaut_vector, zeros_vector, special_token_vectors)).astype('float32', casting= 'same_kind')
     print('Loading word2vec {} from {} takes {:.6f} seconds'.format(vectors.shape, embeding_file_name, time() - start_time))
+    for key, value in word2idx.items():
+        if value == len(word2idx):
+            print(key, value)
     assert word2vec.shape[0] == len(word2idx)
     return (word2vec, word2idx, vocab_size, special_token_dict)
 
@@ -61,7 +64,8 @@ class WordEmbedding(nn.Module):
         self.word_count = len(self.word2idx)
         self.oov_idx = vocab_size
         self.pad_idx = vocab_size + 1
-        print('Pre-trained embeddings loaded in {:.6f} seconds!'.format(time() - start_time))
+        assert self.word2vec.shape[0] == self.word_count
+        print('Pre-trained embeddings {} loaded in {:.6f} seconds!'.format(word2vec.shape, time() - start_time))
 
     def forward(self, idxes: LongTensor):
         return self.wordEmbed(idxes)
