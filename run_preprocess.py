@@ -238,7 +238,6 @@ if __name__ == '__main__':
     parser.add_argument('--fasttext_model', type=str, default='wiki-news-300d-1M.vec') #'wiki-news-300d-1M-subword.vec'
     parser.add_argument('--glove_model', type=str, default='glove.840B.300d')
     parser.add_argument('--word_embed_type', type=str, default='fasttext')
-    parser.add_argument('--roberta_model', type=str, default='roberta-large')
     parser.add_argument('--add_special_token', type=boolean_string, default='true')
     args = parser.parse_args()
     for key, value in vars(args).items():

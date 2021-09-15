@@ -33,8 +33,8 @@ def load_pretrained_embedding_ndarray(embeding_file_name: str, dim=300,
     vectors = bcolz.open(f'{embeding_file_name}.dat')[:]
     word2idx = pickle.load(open(f'{embeding_file_name}.idx.pkl', 'rb'))
     vocab_size = len(word2idx)
-    word2idx[UNKNOWN] = len(word2idx) + 1
-    word2idx[PAD_TOKEN] = len(word2idx) + 1
+    word2idx[UNKNOWN] = vocab_size
+    word2idx[PAD_TOKEN] = vocab_size + 1
     word_num = len(word2idx)
     for idx, special_word_pair in enumerate(special_tokens):
         word2idx[special_word_pair[1]] = word_num + idx
