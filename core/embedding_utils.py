@@ -45,7 +45,7 @@ def load_pretrained_embedding_ndarray(embeding_file_name: str, dim=300,
     special_token_vectors = np.random.uniform(-0.1, 0.1, (len(special_tokens), dim))
     special_token_dict = {_[0]: _[1] for _ in special_tokens}
     word2vec = np.vstack((vectors, defaut_vector, zeros_vector, special_token_vectors)).astype('float32', casting= 'same_kind')
-    print('Loading word2vec {} from {} takes {:.6f} seconds'.format(vectors.shape, embeding_file_name, time() - start_time))
+    print('Loading word2vec {} from {} takes {:.6f} seconds'.format(word2vec.shape, embeding_file_name, time() - start_time))
     for key, value in word2idx.items():
         if value == len(word2idx):
             print(key, value)
