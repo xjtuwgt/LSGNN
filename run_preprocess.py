@@ -249,12 +249,12 @@ if __name__ == '__main__':
     #
     # ## Step 2: model preprocess
     # restore_fast_text_word_embeddings(args=args)
-    # restore_glove_word_embeddings(args=args)
+    restore_glove_word_embeddings(args=args)
 
     # Step 3: dump-features: tokens map to ids
-    wikihop_train_dev_decoder(args=args)
-    args.word_embed_type = 'glove'
-    wikihop_train_dev_decoder(args=args)
+    # wikihop_train_dev_decoder(args=args)
+    # args.word_embed_type = 'glove'
+    # wikihop_train_dev_decoder(args=args)
 
     # # Step 3: data analysis
     # wikihop_data_analysis(args=args)
