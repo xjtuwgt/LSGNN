@@ -32,6 +32,7 @@ def load_pretrained_embedding_ndarray(embeding_file_name: str, dim=300,
         defaut_vector = np.random.uniform(-0.1, 0.1, (1, dim))
     vectors = bcolz.open(f'{embeding_file_name}.dat')[:]
     word2idx = pickle.load(open(f'{embeding_file_name}.idx.pkl', 'rb'))
+    print('Vectors = {}, word number = {}'.format(vectors.shape, len(word2idx)))
     vocab_size = len(word2idx)
     assert UNKNOWN not in word2idx
     assert PAD_TOKEN not in word2idx
@@ -48,6 +49,7 @@ def load_pretrained_embedding_ndarray(embeding_file_name: str, dim=300,
     for key, value in word2idx.items():
         if value == len(word2idx):
             print(key, value)
+
     assert word2vec.shape[0] == len(word2idx)
     return (word2vec, word2idx, vocab_size, special_token_dict)
 
