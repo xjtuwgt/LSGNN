@@ -7,8 +7,17 @@ import math
 import pickle #Parrallel precessing
 from torch import nn
 
+QUERY_START = '[Q]'
+QUERY_END = '[\Q]'
+ENTITY_START = '[E]'
+ENTITY_END = '[\E]'
+SEP_TOKEN = '[S]'
+UNKNOWN = '[UNK]'
+PAD_TOKEN = '[PAD]'
+SPECIAL_TOKENS = [('query_start', QUERY_START), ('query_end', QUERY_END), ('entity_start', ENTITY_START),
+                  ('entity_end', ENTITY_END), ('sep_token', SEP_TOKEN)]
 def load_pretrained_embedding_ndarray(embeding_file_name: str, dim=300,
-                                     oov_default = 'zero')->(np.ndarray, dict):
+                                     oov_default='zero', special_tokens=SPECIAL_TOKENS)->(np.ndarray, dict):
     """
     :param embeding_file_name:
     :param dim:
@@ -23,23 +32,31 @@ def load_pretrained_embedding_ndarray(embeding_file_name: str, dim=300,
         defaut_vector = np.random.uniform(-0.1, 0.1, (1, dim))
     vectors = bcolz.open(f'{embeding_file_name}.dat')[:]
     word2idx = pickle.load(open(f'{embeding_file_name}.idx.pkl', 'rb'))
-    word2vec = np.vstack((vectors, defaut_vector, zeros_vector)).astype('float32', casting= 'same_kind')
+    vocab_size = len(word2idx)
+    word2idx[UNKNOWN] = len(word2idx) + 1
+    word2idx[PAD_TOKEN] = len(word2idx) + 1
+    word_num = len(word2idx)
+    for idx, special_word_pair in enumerate(special_tokens):
+        word2idx[special_word_pair[1]] = word_num + idx
+    special_token_vectors = np.random.uniform(-0.1, 0.1, (len(special_tokens), dim))
+    special_token_dict = {_[0]: _[1] for _ in special_tokens}
+    word2vec = np.vstack((vectors, defaut_vector, zeros_vector, special_token_vectors)).astype('float32', casting= 'same_kind')
     print('Loading word2vec {} from {} takes {:.6f} seconds'.format(vectors.shape, embeding_file_name, time() - start_time))
-    return (word2vec, word2idx)
+    return (word2vec, word2idx, vocab_size, special_token_dict)
 
 class WordEmbedding(nn.Module):
-    def __init__(self, pre_trained_name: str, oov_default='zero', dim=300, freeze=True):
+    def __init__(self, pre_trained_name: str, oov_default='zero', dim=300, freeze=False):
         super(WordEmbedding, self).__init__()
         self.oov_default = oov_default
         self.dim = dim
         start_time = time()
-        word2vec, self.word2idx = \
+        word2vec, self.word2idx, vocab_size, self.special_token_dict = \
             load_pretrained_embedding_ndarray(pre_trained_name, self.dim, self.oov_default)
         self.word2vec = torch.from_numpy(word2vec)
         self.wordEmbed = nn.Embedding.from_pretrained(embeddings=self.word2vec, freeze=freeze)
         self.word_count = len(self.word2idx)
-        self.oov_idx = self.word_count
-        self.pad_idx = self.word_count + 1
+        self.oov_idx = vocab_size
+        self.pad_idx = vocab_size + 1
         print('Pre-trained embeddings loaded in {:.6f} seconds!'.format(time() - start_time))
 
     def forward(self, idxes: LongTensor):
@@ -58,6 +75,9 @@ class WordEmbedding(nn.Module):
 
     def padding_idx(self):
         return self.pad_idx
+
+    def special_tokens(self):
+        return self.special_token_dict
 
 class RelationEmbedding(nn.Module):
     def __init__(self, num_relations, dim=300, gamma=0.1):
