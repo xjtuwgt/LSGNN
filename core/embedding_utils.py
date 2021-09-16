@@ -162,9 +162,9 @@ class SeqGNNNodeEmbedding(nn.Module):
             self.position_embedding = PositionEmbedding(max_position=max_position, hidden_dim=hidden_dim,
                                                         initial_type=pos_initial_type)
 
-    def forward(self, input_ids, position_ids):
+    def forward(self, input_ids, position_ids=None):
         inp_emb = self.word_embedding(input_ids)
-        if self.add_position:
+        if self.add_position and position_ids is not None:
             pos_emb = self.position_embedding(position_ids)
             embeddings = inp_emb + pos_emb
         else:
