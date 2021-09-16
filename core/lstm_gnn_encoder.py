@@ -8,9 +8,9 @@ from core.optimizer_utils import RAdam
 from core.gnn_encoder import RGDTLayer, GDTLayer
 from core.layers import LSTMWrapper
 
-class GDTEncoder(nn.Module):
+class LSTMGDTEncoder(nn.Module):
     def __init__(self, config):
-        super(GDTEncoder, self).__init__()
+        super(LSTMGDTEncoder, self).__init__()
         self.config = config
         self.word_embed_type = self.config.word_embed_type
         if self.word_embed_type == 'glove':
