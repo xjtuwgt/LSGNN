@@ -67,7 +67,7 @@ def example2sequence(query_ids, cands_ids, supps_ids, max_seq_len:int=None):
             max_tok_length = sent_spans[-1][1]
             doc_max_index = _largest_valid_index(doc_spans, max_tok_length)
             doc_spans = doc_spans[:doc_max_index]
-            seq_input_ids = seq_input_ids[:(max_seq_len-1)] + seq_input_ids[-1]
+            seq_input_ids = seq_input_ids[:(max_seq_len-1)] + [seq_input_ids[-1]]
         assert len(seq_input_ids) <= max_seq_len
     return query_span, cand_spans, seq_input_ids, query_cand_len
 
