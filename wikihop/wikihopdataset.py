@@ -89,6 +89,7 @@ class WikihopTrainDataSet(Dataset):
     def __init__(self, examples,
                  window_size: int,
                  relative_position: bool,
+                 pad_id: int,
                  max_ans_num: int = 80,
                  max_seq_length: int = 4096,
                  sent_drop_prob = 0.1,
@@ -153,6 +154,7 @@ class WikihopDevDataSet(Dataset):
     def __init__(self, examples,
                  window_size: int,
                  relative_position: bool,
+                 pad_id: int,
                  max_ans_num: int = 80,
                  max_seq_length: int = 4096,
                  debug=False):
@@ -259,6 +261,8 @@ def graph_seq_collate_fn(data):
     seq_lengths, arg_sort_idxes = torch.sort(seq_lengths, descending=True)
     data = [data[_] for _ in arg_sort_idxes.tolist()]
     graph_node_num_cum_list = list(accumulate(seq_lengths.tolist()))
+    sequences = [_['graph'].ndata['n_type'] for _ in data]
+
     batch_size = len(data)
     if batch_size > 1:
         for idx in range(batch_size-1):

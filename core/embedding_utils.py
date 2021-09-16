@@ -17,7 +17,7 @@ PAD_TOKEN = '[PAD]'
 SPECIAL_TOKENS = (('query_start', QUERY_START), ('query_end', QUERY_END), ('entity_start', ENTITY_START),
                   ('entity_end', ENTITY_END), ('sep_token', SEP_TOKEN))
 def load_pretrained_embedding_ndarray(embeding_file_name: str, dim=300,
-                                     oov_default='zero', special_tokens=SPECIAL_TOKENS)->(np.ndarray, dict):
+                                     oov_default='zero', special_tokens=SPECIAL_TOKENS):
     """
     :param embeding_file_name:
     :param dim:
@@ -44,10 +44,31 @@ def load_pretrained_embedding_ndarray(embeding_file_name: str, dim=300,
         word2idx[special_word_pair[1]] = word_num + idx
     special_token_vectors = np.random.normal(loc=0.0, scale=0.01, size=(len(special_tokens), dim))
     special_token_dict = {_[0]: _[1] for _ in special_tokens}
+    special_token_dict[UNKNOWN] = word2idx[UNKNOWN]
+    special_token_dict[PAD_TOKEN] = word2idx[PAD_TOKEN]
     word2vec = np.vstack((vectors, defaut_vector, zeros_vector, special_token_vectors)).astype('float32', casting= 'same_kind')
     print('Loading word2vec {} from {} takes {:.6f} seconds'.format(word2vec.shape, embeding_file_name, time() - start_time))
     assert word2vec.shape[0] == len(word2idx)
     return (word2vec, word2idx, vocab_size, special_token_dict)
+
+def load_pretrained_embedding_vocab_dict(embeding_file_name: str, special_tokens=SPECIAL_TOKENS):
+    start_time = time()
+    word2idx = pickle.load(open(f'{embeding_file_name}.idx.pkl', 'rb'))
+    print('Vectors = {}, word number = {}'.format(len(word2idx), len(word2idx)))
+    vocab_size = word2idx
+    assert UNKNOWN not in word2idx
+    assert PAD_TOKEN not in word2idx
+    word2idx[UNKNOWN] = vocab_size
+    word2idx[PAD_TOKEN] = vocab_size + 1
+    word_num = len(word2idx)
+    for idx, special_word_pair in enumerate(special_tokens):
+        assert special_word_pair[1] not in word2idx
+        word2idx[special_word_pair[1]] = word_num + idx
+    special_token_dict = {_[0]: _[1] for _ in special_tokens}
+    special_token_dict[UNKNOWN] = word2idx[UNKNOWN]
+    special_token_dict[PAD_TOKEN] = word2idx[PAD_TOKEN]
+    print('Loading word2vec {} from {} takes {:.6f} seconds'.format(len(word2idx), embeding_file_name, time() - start_time))
+    return word2idx, vocab_size, special_token_dict
 
 class WordEmbedding(nn.Module):
     def __init__(self, pre_trained_name: str, oov_default='zero', dim=300, freeze=False):
