@@ -228,6 +228,9 @@ def collate_fn(data):
 
 def graph_collate_fn(data):
     graph_node_num_list = [_['graph'].number_of_nodes() for _ in data]
+    seq_lengths = torch.tensor(graph_node_num_list, dtype=torch.int32)
+    seq_lengths, arg_sort_idxes = torch.sort(seq_lengths, descending=True)
+    data = [data[_] for _ in arg_sort_idxes.tolist()]
     graph_node_num_list = list(accumulate(graph_node_num_list))
     batch_size = len(data)
     if batch_size > 1:
@@ -252,8 +255,10 @@ def graph_collate_fn(data):
 
 def graph_seq_collate_fn(data):
     graph_sequences = [_['graph'].ndata['n_type'] for _ in data]
-
     graph_node_num_list = [_['graph'].number_of_nodes() for _ in data]
+    seq_lengths = torch.tensor(graph_node_num_list, dtype=torch.int32)
+    seq_lengths, arg_sort_idxes = torch.sort(seq_lengths, descending=True)
+    data = [data[_] for _ in arg_sort_idxes.tolist()]
     graph_node_num_list = list(accumulate(graph_node_num_list))
     batch_size = len(data)
     if batch_size > 1:
