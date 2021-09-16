@@ -29,7 +29,7 @@ def load_pretrained_embedding_ndarray(embeding_file_name: str, dim=300,
     if oov_default == 'zero':
         defaut_vector = zeros_vector
     else:
-        defaut_vector = np.random.uniform(-0.01, 0.01, (1, dim))
+        defaut_vector = np.random.normal(loc=0.0, scale=0.01, size=(1, dim))
     vectors = bcolz.open(f'{embeding_file_name}.dat')[:]
     word2idx = pickle.load(open(f'{embeding_file_name}.idx.pkl', 'rb'))
     print('Vectors = {}, word number = {}'.format(vectors.shape, len(word2idx)))
@@ -42,7 +42,7 @@ def load_pretrained_embedding_ndarray(embeding_file_name: str, dim=300,
     for idx, special_word_pair in enumerate(special_tokens):
         assert special_word_pair[1] not in word2idx
         word2idx[special_word_pair[1]] = word_num + idx
-    special_token_vectors = np.random.uniform(-0.01, 0.01, (len(special_tokens), dim))
+    special_token_vectors = np.random.normal(loc=0.0, scale=0.01, size=(len(special_tokens), dim))
     special_token_dict = {_[0]: _[1] for _ in special_tokens}
     word2vec = np.vstack((vectors, defaut_vector, zeros_vector, special_token_vectors)).astype('float32', casting= 'same_kind')
     print('Loading word2vec {} from {} takes {:.6f} seconds'.format(word2vec.shape, embeding_file_name, time() - start_time))
