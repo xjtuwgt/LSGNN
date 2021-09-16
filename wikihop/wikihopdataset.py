@@ -89,7 +89,7 @@ class WikihopTrainDataSet(Dataset):
     def __init__(self, examples,
                  window_size: int,
                  relative_position: bool,
-                 pad_id: int,
+                 pad_id: int=None,
                  max_ans_num: int = 80,
                  max_seq_length: int = 4096,
                  sent_drop_prob = 0.1,
@@ -105,6 +105,7 @@ class WikihopTrainDataSet(Dataset):
         self.max_ans_num = max_ans_num
         self.max_seq_length = max_seq_length
         self.relative_position = relative_position
+        self.pad_id = pad_id
 
     def __len__(self):
         return len(self.examples)
@@ -147,6 +148,8 @@ class WikihopTrainDataSet(Dataset):
 
         res = {'q_start': query_start_pos, 'q_end': query_end_pos, 'cand_start': cand_start_pos, 'cand_end': cand_end_pos, 'cand_mask': cand_mask,
                'label': answer_label, 'graph': graph, 'label_id': answer_label_id, 'id': example_id}
+        if self.pad_id is not None:
+            res['pad_id'] = self.pad_id
         return res
 
 
@@ -154,7 +157,7 @@ class WikihopDevDataSet(Dataset):
     def __init__(self, examples,
                  window_size: int,
                  relative_position: bool,
-                 pad_id: int,
+                 pad_id: int=None,
                  max_ans_num: int = 80,
                  max_seq_length: int = 4096,
                  debug=False):
@@ -166,6 +169,7 @@ class WikihopDevDataSet(Dataset):
         self.max_ans_num = max_ans_num
         self.max_seq_length = max_seq_length
         self.relative_position = relative_position
+        self.pad_id = pad_id
 
     def __len__(self):
         return len(self.examples)
@@ -201,19 +205,21 @@ class WikihopDevDataSet(Dataset):
         res = {'q_start': query_start_pos, 'q_end': query_end_pos, 'cand_start': cand_start_pos, 'cand_end': cand_end_pos,
                'cand_mask': cand_mask,
                'label': answer_label, 'label_id': answer_label_id, 'graph': graph, 'id': example_id}
+        if self.pad_id is not None:
+            res['pad_id'] = self.pad_id
         return res
 
 def collate_fn(data):
     graph_node_num_list = [_['graph'].number_of_nodes() for _ in data]
-    graph_node_num_list = list(accumulate(graph_node_num_list))
+    graph_node_num_cum_list = list(accumulate(graph_node_num_list))
     batch_size = len(data)
     if batch_size > 1:
-        for idx in range(batch_size-1):
-            data[idx + 1]['cand_start'] = data[idx + 1]['cand_start'] + graph_node_num_list[idx]
-            data[idx + 1]['cand_end'] = data[idx + 1]['cand_end'] + graph_node_num_list[idx]
+        for idx in range(1, batch_size):
+            data[idx]['cand_start'] = data[idx]['cand_start'] + graph_node_num_cum_list[idx-1]
+            data[idx]['cand_end'] = data[idx]['cand_end'] + graph_node_num_cum_list[idx-1]
 
-            data[idx+1]['q_start'] = data[idx+1]['q_start'] + graph_node_num_list[idx]
-            data[idx + 1]['q_end'] = data[idx + 1]['q_end'] + graph_node_num_list[idx]
+            data[idx]['q_start'] = data[idx]['q_start'] + graph_node_num_cum_list[idx-1]
+            data[idx]['q_end'] = data[idx]['q_end'] + graph_node_num_cum_list[idx-1]
 
     batch_cand_start = torch.stack([_['cand_start'] for _ in data])
     batch_cand_end = torch.stack([_['cand_end'] for _ in data])
@@ -236,12 +242,12 @@ def graph_collate_fn(data):
     graph_node_num_cum_list = list(accumulate(seq_lengths.tolist()))
     batch_size = len(data)
     if batch_size > 1:
-        for idx in range(batch_size-1):
-            data[idx + 1]['cand_start'] = data[idx + 1]['cand_start'] + graph_node_num_cum_list[idx]
-            data[idx + 1]['cand_end'] = data[idx + 1]['cand_end'] + graph_node_num_cum_list[idx]
+        for idx in range(1, batch_size):
+            data[idx]['cand_start'] = data[idx]['cand_start'] + graph_node_num_cum_list[idx-1]
+            data[idx]['cand_end'] = data[idx]['cand_end'] + graph_node_num_cum_list[idx-1]
 
-            data[idx+1]['q_start'] = data[idx+1]['q_start'] + graph_node_num_cum_list[idx]
-            data[idx + 1]['q_end'] = data[idx + 1]['q_end'] + graph_node_num_cum_list[idx]
+            data[idx]['q_start'] = data[idx]['q_start'] + graph_node_num_cum_list[idx-1]
+            data[idx]['q_end'] = data[idx]['q_end'] + graph_node_num_cum_list[idx-1]
     batch_cand_start = torch.stack([_['cand_start'] for _ in data])
     batch_cand_end = torch.stack([_['cand_end'] for _ in data])
     batch_cand_mask = torch.stack([_['cand_mask'] for _ in data])
@@ -261,16 +267,17 @@ def graph_seq_collate_fn(data):
     seq_lengths, arg_sort_idxes = torch.sort(seq_lengths, descending=True)
     data = [data[_] for _ in arg_sort_idxes.tolist()]
     graph_node_num_cum_list = list(accumulate(seq_lengths.tolist()))
+    max_seq_len = seq_lengths[0].data.item()
     sequences = [_['graph'].ndata['n_type'] for _ in data]
 
     batch_size = len(data)
     if batch_size > 1:
-        for idx in range(batch_size-1):
-            data[idx + 1]['cand_start'] = data[idx + 1]['cand_start'] + graph_node_num_cum_list[idx]
-            data[idx + 1]['cand_end'] = data[idx + 1]['cand_end'] + graph_node_num_cum_list[idx]
+        for idx in range(1, batch_size):
+            data[idx]['cand_start'] = data[idx]['cand_start'] + graph_node_num_cum_list[idx-1]
+            data[idx]['cand_end'] = data[idx]['cand_end'] + graph_node_num_cum_list[idx-1]
 
-            data[idx+1]['q_start'] = data[idx+1]['q_start'] + graph_node_num_cum_list[idx]
-            data[idx + 1]['q_end'] = data[idx + 1]['q_end'] + graph_node_num_cum_list[idx]
+            data[idx]['q_start'] = data[idx]['q_start'] + graph_node_num_cum_list[idx-1]
+            data[idx]['q_end'] = data[idx]['q_end'] + graph_node_num_cum_list[idx-1]
     batch_cand_start = torch.stack([_['cand_start'] for _ in data])
     batch_cand_end = torch.stack([_['cand_end'] for _ in data])
     batch_cand_mask = torch.stack([_['cand_mask'] for _ in data])
