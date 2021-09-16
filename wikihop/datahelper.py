@@ -1,7 +1,7 @@
 from torch.utils.data import DataLoader
 from wikihop.ioutils import load_gz_file
 from core.embedding_utils import load_pretrained_embedding_vocab_dict
-from wikihop.wikihopdataset import WikihopTrainDataSet, WikihopDevDataSet, graph_collate_fn
+from wikihop.wikihopdataset import WikihopTrainDataSet, WikihopDevDataSet, graph_collate_fn, graph_seq_collate_fn
 from envs import PREPROCESS_FOLDER
 from os.path import join
 
@@ -43,7 +43,8 @@ class DataHelper(object):
         dataloader = DataLoader(dataset=train_data,
                                 batch_size=self.config.train_batch_size,
                                 shuffle=True,
-                                collate_fn=graph_collate_fn,
+                                # collate_fn=graph_collate_fn,
+                                collate_fn=graph_seq_collate_fn,
                                 num_workers=self.config.cpu_num //2)
         return dataloader
 
@@ -60,7 +61,8 @@ class DataHelper(object):
             dataset=dev_data,
             batch_size=self.config.eval_batch_size,
             shuffle=False,
-            collate_fn=graph_collate_fn,
+            # collate_fn=graph_collate_fn,
+            collate_fn=graph_seq_collate_fn,
             num_workers=self.config.cpu_num // 2
         )
         return dataloader
