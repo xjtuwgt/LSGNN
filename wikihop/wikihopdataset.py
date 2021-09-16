@@ -17,7 +17,13 @@ def span_generation(len_list):
         span_list.append((accumul_sum_list[i], accumul_sum_list[i + 1] - 1))
     return span_list
 
-def example2sequence(query_ids, cands_ids, supps_ids):
+def _largest_valid_index(spans, limit):
+    for idx in range(len(spans)):
+        if spans[idx][1] >= limit:
+            return idx
+    return len(spans)
+
+def example2sequence(query_ids, cands_ids, supps_ids, max_seq_len:int=None):
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     query_ids = list(itertools.chain(*query_ids))
     seq_input_ids = query_ids
@@ -54,6 +60,15 @@ def example2sequence(query_ids, cands_ids, supps_ids):
     assert len(doc_spans) == len(supps_ids)
     # res = {'q_span': query_span, 'c_span': cand_spans, 's_span': sent_spans, 'd_span': doc_spans,
     #        'input_ids': seq_input_ids, 'q_len': query_len, 'q_c_len': query_cand_len}
+    if max_seq_len is not None:
+        if len(seq_input_ids) > max_seq_len:
+            sent_max_index = _largest_valid_index(sent_spans, max_seq_len - 1)
+            sent_spans = sent_spans[:sent_max_index]
+            max_tok_length = sent_spans[-1][1]
+            doc_max_index = _largest_valid_index(doc_spans, max_tok_length)
+            doc_spans = doc_spans[:doc_max_index]
+            seq_input_ids = seq_input_ids[:(max_seq_len-1)] + seq_input_ids[-1]
+        assert len(seq_input_ids) <= max_seq_len
     return query_span, cand_spans, seq_input_ids, query_cand_len
 
 def sent_list_dropout(supps_ids: list, drop_ratio: float):
@@ -75,6 +90,7 @@ class WikihopTrainDataSet(Dataset):
                  window_size: int,
                  relative_position: bool,
                  max_ans_num: int = 80,
+                 max_seq_length: int = 4096,
                  sent_drop_prob = 0.1,
                  beta_drop_scale = 1.0,
                  debug=False):
@@ -86,6 +102,7 @@ class WikihopTrainDataSet(Dataset):
         self.beta_drop_scale = beta_drop_scale
         self.window_size = window_size
         self.max_ans_num = max_ans_num
+        self.max_seq_length = max_seq_length
         self.relative_position = relative_position
 
     def __len__(self):
@@ -102,7 +119,8 @@ class WikihopTrainDataSet(Dataset):
             drop_supps_ids = sent_list_dropout(supps_ids=supps_ids, drop_ratio=sent_drop_prob)
         else:
             drop_supps_ids = supps_ids
-        query_span, cand_spans, seq_input_ids, query_cand_len = example2sequence(query_ids=query_ids, cands_ids=cands_ids, supps_ids=drop_supps_ids)
+        query_span, cand_spans, seq_input_ids, query_cand_len = example2sequence(query_ids=query_ids, cands_ids=cands_ids,
+                                                                                 supps_ids=drop_supps_ids, max_seq_len=self.max_seq_length)
         cand_ans_num = len(cand_spans)
         ans_mask = [1] * cand_ans_num
         if cand_ans_num < self.max_ans_num:
@@ -136,6 +154,7 @@ class WikihopDevDataSet(Dataset):
                  window_size: int,
                  relative_position: bool,
                  max_ans_num: int = 80,
+                 max_seq_length: int = 4096,
                  debug=False):
         if debug:
             self.examples = examples[:1000]  # for debug
@@ -143,6 +162,7 @@ class WikihopDevDataSet(Dataset):
             self.examples = examples
         self.window_size = window_size
         self.max_ans_num = max_ans_num
+        self.max_seq_length = max_seq_length
         self.relative_position = relative_position
 
     def __len__(self):
@@ -152,7 +172,8 @@ class WikihopDevDataSet(Dataset):
         example = self.examples[idx]
         example_id, answer_label_idx = example['id'], example['ans_idx']
         query_ids, cands_ids, supps_ids = example['q_ids'], example['cand_ids'], example['doc_ids']
-        query_span, cand_spans, seq_input_ids, query_cand_len = example2sequence(query_ids=query_ids, cands_ids=cands_ids, supps_ids=supps_ids)
+        query_span, cand_spans, seq_input_ids, query_cand_len = example2sequence(query_ids=query_ids, cands_ids=cands_ids,
+                                                                                 supps_ids=supps_ids, max_seq_len=self.max_seq_length)
         cand_ans_num = len(cand_spans)
         ans_mask = [1] * cand_ans_num
         if cand_ans_num < self.max_ans_num:
