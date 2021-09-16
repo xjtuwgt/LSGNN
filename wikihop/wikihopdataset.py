@@ -4,6 +4,7 @@ import itertools
 import random
 from scipy.stats import beta
 from codes.seq2graph_utils import seq2graph
+import torch.nn.functional as F
 import torch
 import dgl
 
@@ -268,9 +269,9 @@ def graph_seq_collate_fn(data):
     data = [data[_] for _ in arg_sort_idxes.tolist()]
     graph_node_num_cum_list = list(accumulate(seq_lengths.tolist()))
     max_seq_len = seq_lengths[0].data.item()
-    sequences = [_['graph'].ndata['n_type'] for _ in data]
-
+    sequences = [data[0]['graph'].ndata['n_type']]
     batch_size = len(data)
+    batch_seq_mask = torch.ones((batch_size, max_seq_len), dtype=torch.int32)
     if batch_size > 1:
         for idx in range(1, batch_size):
             data[idx]['cand_start'] = data[idx]['cand_start'] + graph_node_num_cum_list[idx-1]
@@ -278,6 +279,13 @@ def graph_seq_collate_fn(data):
 
             data[idx]['q_start'] = data[idx]['q_start'] + graph_node_num_cum_list[idx-1]
             data[idx]['q_end'] = data[idx]['q_end'] + graph_node_num_cum_list[idx-1]
+            pad_len = max_seq_len - data[idx]['graph'].number_of_nodes()
+            seq_i = data[idx]['graph'].ndata['n_type']
+            seq_i = F.pad(seq_i, (0, pad_len), value=data[idx]['pad_id'])
+            sequences.append(seq_i)
+            batch_seq_mask[idx][data[idx]['graph'].number_of_nodes():]=0
+    batch_sequence = torch.stack(sequences)
+    batch_seq_lens = seq_lengths
     batch_cand_start = torch.stack([_['cand_start'] for _ in data])
     batch_cand_end = torch.stack([_['cand_end'] for _ in data])
     batch_cand_mask = torch.stack([_['cand_mask'] for _ in data])
@@ -288,5 +296,5 @@ def graph_seq_collate_fn(data):
     batch_query_start = torch.stack([_['q_start'] for _ in data])
     batch_query_end = torch.stack([_['q_end'] for _ in data])
     return {'cand_start': batch_cand_start, 'cand_end': batch_cand_end, 'cand_mask': batch_cand_mask,
-            'q_start': batch_query_start, 'q_end': batch_query_end,
-           'label': batch_ans_label, 'label_id': batch_ans_label_id,  'graph': batch_graph, 'id': batch_ids}
+            'q_start': batch_query_start, 'q_end': batch_query_end, 'seq_inputs': batch_sequence, 'seq_mask': batch_seq_mask,
+            'seq_lens': batch_seq_lens, 'label': batch_ans_label, 'label_id': batch_ans_label_id,  'graph': batch_graph, 'id': batch_ids}
