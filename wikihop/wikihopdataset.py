@@ -296,4 +296,5 @@ def graph_seq_collate_fn(data):
     batch_query_end = torch.stack([_['q_end'] for _ in data])
     return {'cand_start': batch_cand_start, 'cand_end': batch_cand_end, 'cand_mask': batch_cand_mask,
             'q_start': batch_query_start, 'q_end': batch_query_end, 'seq_inputs': batch_sequence, 'seq_mask': batch_seq_mask,
-            'seq_lens': batch_seq_lens, 'label': batch_ans_label, 'label_id': batch_ans_label_id,  'graph': batch_graph, 'id': batch_ids}
+            'seq_lens': batch_seq_lens, 'label': batch_ans_label, 'label_id': batch_ans_label_id,
+            'graph': batch_graph, 'id': batch_ids}
