@@ -79,7 +79,7 @@ class WikihopTrainDataSet(Dataset):
                  beta_drop_scale = 1.0,
                  debug=False):
         if debug:
-            self.examples = examples[:100]  # for debug
+            self.examples = examples[:1000]  # for debug
         else:
             self.examples = examples
         self.sent_drop_prob = sent_drop_prob
@@ -162,7 +162,7 @@ class WikihopDevDataSet(Dataset):
                  max_ans_num: int = 80,
                  debug=False):
         if debug:
-            self.examples = examples[:100]  # for debug
+            self.examples = examples[:1000]  # for debug
         else:
             self.examples = examples
         self.window_size = window_size
