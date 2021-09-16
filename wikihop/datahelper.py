@@ -23,6 +23,7 @@ class DataHelper(object):
         train_data = WikihopTrainDataSet(examples=train_examples,
                                          relative_position=self.config.relative_position,
                                          window_size=self.config.window_size,
+                                         max_seq_length=self.config.max_seq_len,
                                          sent_drop_prob=self.config.sent_drop_prob,
                                          debug=self.config.debug)
         # ####++++++++++++
@@ -39,6 +40,7 @@ class DataHelper(object):
         dev_data = WikihopDevDataSet(examples=dev_examples,
                                      relative_position=self.config.relative_position,
                                      window_size=self.config.window_size,
+                                     max_seq_length=self.config.max_seq_len,
                                      debug=self.config.debug)
         dataloader = DataLoader(
             dataset=dev_data,
