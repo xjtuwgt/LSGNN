@@ -276,7 +276,6 @@ def graph_seq_collate_fn(data):
         for idx in range(1, batch_size):
             data[idx]['cand_start'] = data[idx]['cand_start'] + graph_node_num_cum_list[idx-1]
             data[idx]['cand_end'] = data[idx]['cand_end'] + graph_node_num_cum_list[idx-1]
-
             data[idx]['q_start'] = data[idx]['q_start'] + graph_node_num_cum_list[idx-1]
             data[idx]['q_end'] = data[idx]['q_end'] + graph_node_num_cum_list[idx-1]
             pad_len = max_seq_len - data[idx]['graph'].number_of_nodes()
