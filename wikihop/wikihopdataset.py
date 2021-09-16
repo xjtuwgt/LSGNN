@@ -231,15 +231,15 @@ def graph_collate_fn(data):
     seq_lengths = torch.tensor(graph_node_num_list, dtype=torch.int32)
     seq_lengths, arg_sort_idxes = torch.sort(seq_lengths, descending=True)
     data = [data[_] for _ in arg_sort_idxes.tolist()]
-    graph_node_num_list = list(accumulate(graph_node_num_list))
+    graph_node_num_cum_list = list(accumulate(seq_lengths.tolist()))
     batch_size = len(data)
     if batch_size > 1:
         for idx in range(batch_size-1):
-            data[idx + 1]['cand_start'] = data[idx + 1]['cand_start'] + graph_node_num_list[idx]
-            data[idx + 1]['cand_end'] = data[idx + 1]['cand_end'] + graph_node_num_list[idx]
+            data[idx + 1]['cand_start'] = data[idx + 1]['cand_start'] + graph_node_num_cum_list[idx]
+            data[idx + 1]['cand_end'] = data[idx + 1]['cand_end'] + graph_node_num_cum_list[idx]
 
-            data[idx+1]['q_start'] = data[idx+1]['q_start'] + graph_node_num_list[idx]
-            data[idx + 1]['q_end'] = data[idx + 1]['q_end'] + graph_node_num_list[idx]
+            data[idx+1]['q_start'] = data[idx+1]['q_start'] + graph_node_num_cum_list[idx]
+            data[idx + 1]['q_end'] = data[idx + 1]['q_end'] + graph_node_num_cum_list[idx]
     batch_cand_start = torch.stack([_['cand_start'] for _ in data])
     batch_cand_end = torch.stack([_['cand_end'] for _ in data])
     batch_cand_mask = torch.stack([_['cand_mask'] for _ in data])
@@ -254,20 +254,19 @@ def graph_collate_fn(data):
            'label': batch_ans_label, 'label_id': batch_ans_label_id,  'graph': batch_graph, 'id': batch_ids}
 
 def graph_seq_collate_fn(data):
-    graph_sequences = [_['graph'].ndata['n_type'] for _ in data]
     graph_node_num_list = [_['graph'].number_of_nodes() for _ in data]
     seq_lengths = torch.tensor(graph_node_num_list, dtype=torch.int32)
     seq_lengths, arg_sort_idxes = torch.sort(seq_lengths, descending=True)
     data = [data[_] for _ in arg_sort_idxes.tolist()]
-    graph_node_num_list = list(accumulate(graph_node_num_list))
+    graph_node_num_cum_list = list(accumulate(seq_lengths.tolist()))
     batch_size = len(data)
     if batch_size > 1:
         for idx in range(batch_size-1):
-            data[idx + 1]['cand_start'] = data[idx + 1]['cand_start'] + graph_node_num_list[idx]
-            data[idx + 1]['cand_end'] = data[idx + 1]['cand_end'] + graph_node_num_list[idx]
+            data[idx + 1]['cand_start'] = data[idx + 1]['cand_start'] + graph_node_num_cum_list[idx]
+            data[idx + 1]['cand_end'] = data[idx + 1]['cand_end'] + graph_node_num_cum_list[idx]
 
-            data[idx+1]['q_start'] = data[idx+1]['q_start'] + graph_node_num_list[idx]
-            data[idx + 1]['q_end'] = data[idx + 1]['q_end'] + graph_node_num_list[idx]
+            data[idx+1]['q_start'] = data[idx+1]['q_start'] + graph_node_num_cum_list[idx]
+            data[idx + 1]['q_end'] = data[idx + 1]['q_end'] + graph_node_num_cum_list[idx]
     batch_cand_start = torch.stack([_['cand_start'] for _ in data])
     batch_cand_end = torch.stack([_['cand_end'] for _ in data])
     batch_cand_mask = torch.stack([_['cand_mask'] for _ in data])
