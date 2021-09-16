@@ -55,7 +55,7 @@ def load_pretrained_embedding_vocab_dict(embeding_file_name: str, special_tokens
     start_time = time()
     word2idx = pickle.load(open(f'{embeding_file_name}.idx.pkl', 'rb'))
     print('Vectors = {}, word number = {}'.format(len(word2idx), len(word2idx)))
-    vocab_size = word2idx
+    vocab_size = len(word2idx)
     assert UNKNOWN not in word2idx
     assert PAD_TOKEN not in word2idx
     word2idx[UNKNOWN] = vocab_size
