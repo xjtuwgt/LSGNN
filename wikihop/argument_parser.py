@@ -50,6 +50,8 @@ def complete_default_parser(args):
         args.glove_model = args.glove_model + '.wikihop'
     # set n_gpu
     # ++++++++++++++
+    if args.debug:
+        args.eval_interval_ratio = 0.5
     if args.relative_position:
         args.num_relations = 2 * args.window_size + 1
         args.add_position = False
