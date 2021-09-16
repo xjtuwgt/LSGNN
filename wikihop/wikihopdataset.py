@@ -81,7 +81,7 @@ class WikihopTrainDataSet(Dataset):
         if debug:
             self.examples = examples[:1000]  # for debug
         else:
-            self.examples = examples[:5000]
+            self.examples = examples[:1000]
         self.sent_drop_prob = sent_drop_prob
         self.beta_drop_scale = beta_drop_scale
         self.window_size = window_size
@@ -130,30 +130,6 @@ class WikihopTrainDataSet(Dataset):
                'label': answer_label, 'graph': graph, 'label_id': answer_label_id, 'id': example_id}
         return res
 
-    @staticmethod
-    def collate_fn(data):
-        graph_node_num_list = [_['graph'].number_of_nodes() for _ in data]
-        graph_node_num_list = list(accumulate(graph_node_num_list))
-        batch_size = len(data)
-        if batch_size > 1:
-            for idx in range(batch_size-1):
-                data[idx + 1]['cand_start'] = data[idx + 1]['cand_start'] + graph_node_num_list[idx]
-                data[idx + 1]['cand_end'] = data[idx + 1]['cand_end'] + graph_node_num_list[idx]
-
-                data[idx+1]['q_start'] = data[idx+1]['q_start'] + graph_node_num_list[idx]
-                data[idx + 1]['q_end'] = data[idx + 1]['q_end'] + graph_node_num_list[idx]
-        batch_cand_start = torch.stack([_['cand_start'] for _ in data])
-        batch_cand_end = torch.stack([_['cand_end'] for _ in data])
-        batch_cand_mask = torch.stack([_['cand_mask'] for _ in data])
-        batch_ans_label = torch.stack([_['label'] for _ in data])
-        batch_graph = dgl.batch([_['graph'] for _ in data])
-        batch_ids = [_['id'] for _ in data]
-        batch_ans_label_id = torch.stack([_['label_id'] for _ in data])
-        batch_query_start = torch.stack([_['q_start'] for _ in data])
-        batch_query_end = torch.stack([_['q_end'] for _ in data])
-        return {'cand_start': batch_cand_start, 'cand_end': batch_cand_end, 'cand_mask': batch_cand_mask,
-                'q_start': batch_query_start, 'q_end': batch_query_end,
-               'label': batch_ans_label, 'label_id': batch_ans_label_id,  'graph': batch_graph, 'id': batch_ids}
 
 class WikihopDevDataSet(Dataset):
     def __init__(self, examples,
@@ -204,28 +180,51 @@ class WikihopDevDataSet(Dataset):
                'label': answer_label, 'label_id': answer_label_id, 'graph': graph, 'id': example_id}
         return res
 
-    @staticmethod
-    def collate_fn(data):
-        graph_node_num_list = [_['graph'].number_of_nodes() for _ in data]
-        graph_node_num_list = list(accumulate(graph_node_num_list))
-        batch_size = len(data)
-        if batch_size > 1:
-            for idx in range(batch_size-1):
-                data[idx + 1]['cand_start'] = data[idx + 1]['cand_start'] + graph_node_num_list[idx]
-                data[idx + 1]['cand_end'] = data[idx + 1]['cand_end'] + graph_node_num_list[idx]
+def collate_fn(data):
+    graph_node_num_list = [_['graph'].number_of_nodes() for _ in data]
+    graph_node_num_list = list(accumulate(graph_node_num_list))
+    batch_size = len(data)
+    if batch_size > 1:
+        for idx in range(batch_size-1):
+            data[idx + 1]['cand_start'] = data[idx + 1]['cand_start'] + graph_node_num_list[idx]
+            data[idx + 1]['cand_end'] = data[idx + 1]['cand_end'] + graph_node_num_list[idx]
 
-                data[idx+1]['q_start'] = data[idx+1]['q_start'] + graph_node_num_list[idx]
-                data[idx + 1]['q_end'] = data[idx + 1]['q_end'] + graph_node_num_list[idx]
+            data[idx+1]['q_start'] = data[idx+1]['q_start'] + graph_node_num_list[idx]
+            data[idx + 1]['q_end'] = data[idx + 1]['q_end'] + graph_node_num_list[idx]
 
-        batch_cand_start = torch.stack([_['cand_start'] for _ in data])
-        batch_cand_end = torch.stack([_['cand_end'] for _ in data])
-        batch_cand_mask = torch.stack([_['cand_mask'] for _ in data])
-        batch_ans_label = torch.stack([_['label'] for _ in data])
-        batch_graph = dgl.batch([_['graph'] for _ in data])
-        batch_ids = [_['id'] for _ in data]
-        batch_ans_label_id = torch.stack([_['label_id'] for _ in data])
-        batch_query_start = torch.stack([_['q_start'] for _ in data])
-        batch_query_end = torch.stack([_['q_end'] for _ in data])
-        return {'cand_start': batch_cand_start, 'cand_end': batch_cand_end, 'cand_mask': batch_cand_mask,
-                'q_start': batch_query_start, 'q_end': batch_query_end,
-               'label': batch_ans_label, 'graph': batch_graph, 'label_id': batch_ans_label_id, 'id': batch_ids}
+    batch_cand_start = torch.stack([_['cand_start'] for _ in data])
+    batch_cand_end = torch.stack([_['cand_end'] for _ in data])
+    batch_cand_mask = torch.stack([_['cand_mask'] for _ in data])
+    batch_ans_label = torch.stack([_['label'] for _ in data])
+    batch_graph = dgl.batch([_['graph'] for _ in data])
+    batch_ids = [_['id'] for _ in data]
+    batch_ans_label_id = torch.stack([_['label_id'] for _ in data])
+    batch_query_start = torch.stack([_['q_start'] for _ in data])
+    batch_query_end = torch.stack([_['q_end'] for _ in data])
+    return {'cand_start': batch_cand_start, 'cand_end': batch_cand_end, 'cand_mask': batch_cand_mask,
+            'q_start': batch_query_start, 'q_end': batch_query_end,
+           'label': batch_ans_label, 'graph': batch_graph, 'label_id': batch_ans_label_id, 'id': batch_ids}
+
+def graph_collate_fn(data):
+    graph_node_num_list = [_['graph'].number_of_nodes() for _ in data]
+    graph_node_num_list = list(accumulate(graph_node_num_list))
+    batch_size = len(data)
+    if batch_size > 1:
+        for idx in range(batch_size-1):
+            data[idx + 1]['cand_start'] = data[idx + 1]['cand_start'] + graph_node_num_list[idx]
+            data[idx + 1]['cand_end'] = data[idx + 1]['cand_end'] + graph_node_num_list[idx]
+
+            data[idx+1]['q_start'] = data[idx+1]['q_start'] + graph_node_num_list[idx]
+            data[idx + 1]['q_end'] = data[idx + 1]['q_end'] + graph_node_num_list[idx]
+    batch_cand_start = torch.stack([_['cand_start'] for _ in data])
+    batch_cand_end = torch.stack([_['cand_end'] for _ in data])
+    batch_cand_mask = torch.stack([_['cand_mask'] for _ in data])
+    batch_ans_label = torch.stack([_['label'] for _ in data])
+    batch_graph = dgl.batch([_['graph'] for _ in data])
+    batch_ids = [_['id'] for _ in data]
+    batch_ans_label_id = torch.stack([_['label_id'] for _ in data])
+    batch_query_start = torch.stack([_['q_start'] for _ in data])
+    batch_query_end = torch.stack([_['q_end'] for _ in data])
+    return {'cand_start': batch_cand_start, 'cand_end': batch_cand_end, 'cand_mask': batch_cand_mask,
+            'q_start': batch_query_start, 'q_end': batch_query_end,
+           'label': batch_ans_label, 'label_id': batch_ans_label_id,  'graph': batch_graph, 'id': batch_ids}
