@@ -65,8 +65,8 @@ def load_pretrained_embedding_vocab_dict(embeding_file_name: str, special_tokens
         assert special_word_pair[1] not in word2idx
         word2idx[special_word_pair[1]] = word_num + idx
     special_token_dict = {_[0]: _[1] for _ in special_tokens}
-    special_token_dict[UNKNOWN] = word2idx[UNKNOWN]
-    special_token_dict[PAD_TOKEN] = word2idx[PAD_TOKEN]
+    special_token_dict['unk_token'] = word2idx[UNKNOWN]
+    special_token_dict['pad_token'] = word2idx[PAD_TOKEN]
     print('Loading word2vec {} from {} takes {:.6f} seconds'.format(len(word2idx), embeding_file_name, time() - start_time))
     return word2idx, vocab_size, special_token_dict
 
