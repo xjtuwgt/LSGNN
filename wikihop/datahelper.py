@@ -24,6 +24,7 @@ class DataHelper(object):
             raise '{} is not supported'.format(self.word_embed_file_name)
         self.pre_trained_name = join(self.config.db_path, 'models', self.word_embed_file_name)
         _, _, self.special_token_dict = load_pretrained_embedding_vocab_dict(embeding_file_name=self.pre_trained_name)
+        self.pad_id = self.special_token_dict['pad_token']
 
     @property
     def wikihop_train_dataloader(self) -> DataLoader:
@@ -33,6 +34,7 @@ class DataHelper(object):
             train_examples = load_gz_file(file_name=self.train_example_name)
         train_data = WikihopTrainDataSet(examples=train_examples,
                                          relative_position=self.config.relative_position,
+                                         pad_id=self.pad_id,
                                          window_size=self.config.window_size,
                                          max_seq_length=self.config.max_seq_len,
                                          sent_drop_prob=self.config.sent_drop_prob,
@@ -49,6 +51,7 @@ class DataHelper(object):
     def wikihop_val_dataloader(self) -> DataLoader:
         dev_examples = load_gz_file(file_name=self.dev_example_name)
         dev_data = WikihopDevDataSet(examples=dev_examples,
+                                     pad_id=self.pad_id,
                                      relative_position=self.config.relative_position,
                                      window_size=self.config.window_size,
                                      max_seq_length=self.config.max_seq_len,

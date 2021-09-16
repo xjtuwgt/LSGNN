@@ -44,8 +44,8 @@ def load_pretrained_embedding_ndarray(embeding_file_name: str, dim=300,
         word2idx[special_word_pair[1]] = word_num + idx
     special_token_vectors = np.random.normal(loc=0.0, scale=0.01, size=(len(special_tokens), dim))
     special_token_dict = {_[0]: _[1] for _ in special_tokens}
-    special_token_dict[UNKNOWN] = word2idx[UNKNOWN]
-    special_token_dict[PAD_TOKEN] = word2idx[PAD_TOKEN]
+    special_token_dict['unk_token'] = word2idx[UNKNOWN]
+    special_token_dict['pad_token'] = word2idx[PAD_TOKEN]
     word2vec = np.vstack((vectors, defaut_vector, zeros_vector, special_token_vectors)).astype('float32', casting= 'same_kind')
     print('Loading word2vec {} from {} takes {:.6f} seconds'.format(word2vec.shape, embeding_file_name, time() - start_time))
     assert word2vec.shape[0] == len(word2idx)
