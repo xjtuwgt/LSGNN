@@ -99,7 +99,7 @@ class WikihopTrainDataSet(Dataset):
         if debug:
             self.examples = examples[:100]  # for debug
         else:
-            self.examples = examples
+            self.examples = examples[:2000]
         self.sent_drop_prob = sent_drop_prob
         self.beta_drop_scale = beta_drop_scale
         self.window_size = window_size
