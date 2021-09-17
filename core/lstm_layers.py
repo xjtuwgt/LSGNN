@@ -52,6 +52,10 @@ class LSTMWrapper(nn.Module):
             return torch.cat(outputs, dim=2)
         return outputs[-1]
 
+
+
+
+
 if __name__ == '__main__':
     model = LSTMWrapper(input_dim=10, hidden_dim=20, n_layer=2)
     print('Model Parameter Configuration:')
