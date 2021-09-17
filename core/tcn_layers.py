@@ -24,6 +24,7 @@ class GAP1d(nn.Module):
 class TemporalBlock(nn.Module):
     def __init__(self, ni, nf, ks, stride, dilation, padding, dropout=0.):
         super(TemporalBlock, self).__init__()
+        print(stride, padding, dilation, ni, nf, ks)
         self.conv1 = weight_norm(nn.Conv1d(ni,nf,ks,stride=stride,padding=padding,dilation=dilation))
         self.chomp1 = Chomp1d(padding)
         self.relu1 = nn.ReLU()
@@ -44,6 +45,10 @@ class TemporalBlock(nn.Module):
         if self.downsample is not None: self.downsample.weight.data.normal_(0, 0.01)
 
     def forward(self, x):
+        """
+        :param x: batch_size X embeded_dim X seqlen
+        :return:
+        """
         out = self.net(x)
         res = x if self.downsample is None else self.downsample(x)
         return self.relu(out + res)
@@ -64,8 +69,24 @@ class TemporalConvNet(nn.Module):
             x = layer(x)
         return x
 
+class TCNWrapper(nn.Module):
+    def __init__(self, c_in: int, c_out: int, layers=[64] * 2, ks=7, conv_dropout=0., fc_dropout=0.):
+        super(TCNWrapper, self).__init__()
+        self.encoder = TemporalConvNet(c_in, layers, ks=ks, dropout=conv_dropout)
+        self.dropout = nn.Dropout(fc_dropout) if fc_dropout else None
+        self.linear = nn.Linear(layers[-1],c_out)
+        self.init_weights()
+
+    def init_weights(self):
+        self.linear.weight.data.normal_(0, 0.01)
+
+    def forward(self, x):
+        x = self.encoder(x)
+        if self.dropout is not None: x = self.dropout(x)
+        return self.linear(x)
+
 class TCN(nn.Module):
-    def __init__(self, c_in: int, c_out:int, layers=[25] * 2, ks=7, conv_dropout=0., fc_dropout=0.):
+    def __init__(self, c_in: int, c_out: int, layers=[64] * 2, ks=7, conv_dropout=0., fc_dropout=0.):
         super(TCN, self).__init__()
         self.encoder = TemporalConvNet(c_in, layers, ks=ks, dropout=conv_dropout)
         self.gap = GAP1d()
@@ -84,7 +105,7 @@ class TCN(nn.Module):
         return self.linear(x)
 
 if __name__  == '__main__':
-    model = TCN(c_in=300, c_out=20)
+    model = TCN(c_in=300, c_out=256)
     print('Model Parameter Configuration:')
     for name, param in model.named_parameters():
         print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
@@ -93,3 +114,10 @@ if __name__  == '__main__':
     x = torch.rand((2, 300, 1000))
     y = model(x)
     print(y.shape)
+    m = nn.Conv1d(16, 33, 7, stride=1, padding=6, dilation=1)
+    input = torch.randn(20, 16, 50)
+    output = m(input)
+    chomp1 = Chomp1d(6)
+    output=chomp1(output)
+    print(input.shape)
+    print(output.shape)
