@@ -21,7 +21,7 @@ def wikihop_example_process(data_name, is_train_data=True):
     examples = wikihop_example_extraction(data=data)
     return examples
 
-def wikihop_example_roberta_process(data_name, args, is_train_data=True):
+def wikihop_example_longformer_process(data_name, args, is_train_data=True):
     if is_train_data:
         data = load_train_wikihop_data(train_data_name=data_name)
     else:
@@ -31,17 +31,17 @@ def wikihop_example_roberta_process(data_name, args, is_train_data=True):
     return examples
 
 def wikihop_train_dev_roberta_tokenize(args):
-    assert args.word_embed_type == 'roberta_large'
+    assert args.word_embed_type == 'longformer_large'
     train_data_name = join(HOME_DATA_FOLDER, 'wikihop', args.train_name)
     processed_train_data_name = join(PREPROCESS_FOLDER, args.word_embed_type + '.' + args.token_train_name)
-    train_examples = wikihop_example_roberta_process(data_name=train_data_name, args=args, is_train_data=True)
+    train_examples = wikihop_example_longformer_process(data_name=train_data_name, args=args, is_train_data=True)
     with gzip.open(processed_train_data_name, 'wb') as fout:
         pickle.dump(train_examples, fout)
     print('Saving {} examples in {}'.format(len(train_examples), processed_train_data_name))
 
     dev_data_name = join(HOME_DATA_FOLDER, 'wikihop', args.dev_name)
     processed_dev_data_name = join(PREPROCESS_FOLDER, args.word_embed_type + '.' + args.token_dev_name)
-    dev_examples = wikihop_example_roberta_process(data_name=dev_data_name, args=args, is_train_data=False)
+    dev_examples = wikihop_example_longformer_process(data_name=dev_data_name, args=args, is_train_data=False)
     with gzip.open(processed_dev_data_name, 'wb') as fout:
         pickle.dump(dev_examples, fout)
     print('Saving {} examples in {}'.format(len(dev_examples), processed_dev_data_name))
@@ -102,9 +102,9 @@ def wikihop_train_dev_decoder(args, customer=True):
     print('Saving {} examples in {}'.format(len(dev_examples), processed_dev_data_name))
 
 
-def wikihop_train_dev_roberta_decoder(args):
-    assert args.word_embed_type == 'roberta_large'
-    tokenizer = LongformerTokenizer.from_pretrained(args.roberta_model)
+def wikihop_train_dev_longformer_decoder(args):
+    assert args.word_embed_type == 'longformer_large'
+    tokenizer = LongformerTokenizer.from_pretrained(args.longformer_model)
     train_example_file_name = join(PREPROCESS_FOLDER, args.word_embed_type + '.' +args.token_train_name)
     processed_train_data_name = join(PREPROCESS_FOLDER, args.word_embed_type + '.' + args.decode_train_name)
     train_examples = wikihop_longformer_dump_features(example_file_name=train_example_file_name, tokenizer=tokenizer)
