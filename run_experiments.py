@@ -46,8 +46,8 @@ dev_data_loader = data_helper.wikihop_val_dataloader
 train_data_loader = data_helper.wikihop_train_dataloader
 
 # model = GDTEncoder(config=args)
-# model = LSTMGDTEncoder(config=args)
-model = TCNGDTEncoder(config=args)
+model = LSTMGDTEncoder(config=args)
+# model = TCNGDTEncoder(config=args)
 model.to(args.device)
 # #########################################################################
 # # Show model information
