@@ -160,7 +160,7 @@ def default_parser():
     # learning and log ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     parser.add_argument('--seed', type=int, default=42,
                         help="random seed for initialization")
-    parser.add_argument("--num_train_epochs", default=100.0, type=float,
+    parser.add_argument("--num_train_epochs", default=30.0, type=float,
                         help="Total number of training epochs to perform.")
     parser.add_argument('--gradient_accumulation_steps', type=int, default=1,
                         help="Number of updates steps to accumulate before performing a backward/update pass.")
