@@ -62,6 +62,7 @@ class LSTMGDTEncoder(nn.Module):
         lstm_input = self.node_embedder.forward(input_ids=batch['seq_inputs'])
         lstm_output = self.lstm_encoder.forward(input=lstm_input,
                                                 input_lengths=batch['seq_lens'])
+        print(lstm_output.shape)
         batch_size, batch_seq_len, out_dim = lstm_output.shape
         lstm_output = lstm_output.view(batch_size * batch_seq_len, -1)
         lstm_mask = batch['seq_mask'].view(batch_size * batch_seq_len)
