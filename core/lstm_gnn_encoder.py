@@ -75,8 +75,8 @@ class LSTMGDTEncoder(nn.Module):
                 else:
                     node_embed = layer(graph, node_embed)
             node_embed = self.final_layer_norm(node_embed)
-            cand_ans_start_emb = node_embed[batch['cand_start']+1]
-            cand_ans_end_emb = node_embed[batch['cand_end']-1]
+            cand_ans_start_emb = node_embed[batch['cand_start']]
+            cand_ans_end_emb = node_embed[batch['cand_end']]
             # cand_ans_emb = torch.cat([cand_ans_start_emb, cand_ans_end_emb], dim=-1)
             cand_ans_emb = (cand_ans_start_emb + cand_ans_end_emb) * 0.5
             cand_ans_scores = self.answer_prediction_layer(cand_ans_emb)
