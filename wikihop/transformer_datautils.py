@@ -27,7 +27,7 @@ def doc_list_tokenizer(doc_list, tokenizer):
         doc_sent_tokens.append(temp_sent_tokens)
     return doc_sentences, doc_sent_tokens
 
-def wikihop_roberta_example_extraction(data, tokenizer: LongformerTokenizer):
+def wikihop_longformer_example_extraction(data, tokenizer: LongformerTokenizer):
     def row_process(row: dict):
         query, answer = row['query'], row['answer']
         candidates, supports = row['candidates'], row['supports']
@@ -45,7 +45,7 @@ def wikihop_roberta_example_extraction(data, tokenizer: LongformerTokenizer):
         examples[case_id] = (query_tokens, candidates_tokens, supports_tokens, answer_label_idx)
     return examples
 
-def wikihop_roberta_dump_features(example_file_name: str, tokenizer: LongformerTokenizer):
+def wikihop_longformer_dump_features(example_file_name: str, tokenizer: LongformerTokenizer):
     def example2sequence(query_tokens, cands_tokens, supports_tokens):
         def decode_word2d_list(words_list):
             return [tokenizer.convert_tokens_to_ids(_) for _ in words_list]
