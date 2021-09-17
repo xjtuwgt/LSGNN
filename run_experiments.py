@@ -13,6 +13,7 @@ from time import time
 from core.gpu_utils import get_single_free_gpu
 from core.gnn_encoder import GDTEncoder
 from core.lstm_gnn_encoder import LSTMGDTEncoder
+from core.tcn_gnn_encoder import TCNGDTEncoder
 from wikihop.lossutils import ce_loss_computation as loss_function
 # from wikihop.lossutils import bce_loss_computation as loss_function
 from wikihop.modelutils import wikihop_model_evaluation
@@ -45,7 +46,8 @@ dev_data_loader = data_helper.wikihop_val_dataloader
 train_data_loader = data_helper.wikihop_train_dataloader
 
 # model = GDTEncoder(config=args)
-model = LSTMGDTEncoder(config=args)
+# model = LSTMGDTEncoder(config=args)
+model = TCNGDTEncoder(config=args)
 model.to(args.device)
 # #########################################################################
 # # Show model information
