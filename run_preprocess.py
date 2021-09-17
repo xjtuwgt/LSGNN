@@ -10,7 +10,7 @@ import argparse
 import itertools
 from tqdm import tqdm
 from core.embedding_utils import WordEmbedding
-from wikihop.roberta_datautils import wikihop_roberta_example_extraction, wikihop_roberta_dump_features
+from wikihop.transformer_datautils import wikihop_roberta_example_extraction, wikihop_roberta_dump_features
 from transformers import RobertaTokenizer
 
 def wikihop_example_process(data_name, is_train_data=True):
