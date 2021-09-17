@@ -62,6 +62,7 @@ class TCNGDTEncoder(nn.Module):
     def forward(self, batch: dict):
         tcn_input = self.node_embedder.forward(input_ids=batch['seq_inputs'])
         tcn_input = tcn_input.transpose(-2, -1)
+        print(tcn_input.shape)
         tcn_output = self.tcn_encoder(tcn_input).transpose(-2, -1)
         batch_size, batch_seq_len, out_dim = tcn_output.shape
         tcn_output = tcn_output.contiguous().view(batch_size * batch_seq_len, out_dim)

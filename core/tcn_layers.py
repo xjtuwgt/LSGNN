@@ -24,7 +24,7 @@ class GAP1d(nn.Module):
 class TemporalBlock(nn.Module):
     def __init__(self, ni, nf, ks, stride, dilation, padding, dropout=0.):
         super(TemporalBlock, self).__init__()
-        print(stride, padding, dilation, ni, nf, ks)
+        # print(stride, padding, dilation, ni, nf, ks)
         self.conv1 = weight_norm(nn.Conv1d(ni,nf,ks,stride=stride,padding=padding,dilation=dilation))
         self.chomp1 = Chomp1d(padding)
         self.relu1 = nn.ReLU()
@@ -74,7 +74,7 @@ class TCNWrapper(nn.Module):
         super(TCNWrapper, self).__init__()
         self.encoder = TemporalConvNet(c_in, layers, ks=ks, dropout=conv_dropout)
         self.dropout = nn.Dropout(fc_dropout) if fc_dropout else None
-        self.linear = nn.Linear(layers[-1],c_out)
+        self.linear = nn.Linear(layers[-1], c_out)
         self.init_weights()
 
     def init_weights(self):
@@ -82,6 +82,7 @@ class TCNWrapper(nn.Module):
 
     def forward(self, x):
         x = self.encoder(x)
+        print(x.shape)
         if self.dropout is not None: x = self.dropout(x)
         return self.linear(x)
 
