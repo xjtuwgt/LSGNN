@@ -63,13 +63,10 @@ class LSTMGDTEncoder(nn.Module):
         lstm_output = self.lstm_encoder.forward(input=lstm_input,
                                                 input_lengths=batch['seq_lens'])
         batch_size, batch_seq_len, out_dim = lstm_output.shape
-        lstm_output = lstm_output.view(batch_size * batch_seq_len, out_dim)
+        lstm_output = lstm_output.view(batch_size * batch_seq_len, -1)
         lstm_mask = batch['seq_mask'].view(batch_size * batch_seq_len)
         graph = batch['graph']
         with graph.local_scope():
-            # inp_ids = graph.ndata['n_type']
-            # pos_ids = graph.ndata['n_id']
-            # node_embed = self.node_embedder(inp_ids, pos_ids)
             node_embed = lstm_output[lstm_mask==1]
             edge_embed = self.edge_embedder.relEmbbed
             for layer_idx, layer in enumerate(self.gdt_layers):
