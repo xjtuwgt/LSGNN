@@ -193,27 +193,3 @@ class SeqGNNEmbeddings(nn.Module):
         embeddings = inputs_embeds + token_type_embeddings
         embeddings = self.LayerNorm(embeddings)
         return embeddings
-
-
-if __name__ == '__main__':
-    # relEmbed = RelationEmbedding(num_relations=3)
-    # linear_map = nn.Linear(in_features=300, out_features=512, bias=False)
-    # x = linear_map(relEmbed.relEmbbed).view(-1, 8, 64)
-    #
-    # attn_r = nn.Parameter(torch.FloatTensor(1, 8, 64), requires_grad=True)
-    #
-    # er = (x * attn_r).sum(dim=-1).unsqueeze(-1)
-    #
-    # idx = torch.randint(0, 3, size=(30,))
-    #
-    # xx = er[idx]
-    #
-    # print(x.shape)
-    # print(er.shape)
-    # print(xx.shape)
-    position_embed = PositionEmbedding(max_position=100, hidden_dim=300)
-
-    for name, param in position_embed.named_parameters():
-        print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
-    print('*' * 75)
-
