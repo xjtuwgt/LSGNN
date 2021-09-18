@@ -136,12 +136,12 @@ def default_parser():
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     parser.add_argument('--lstm_layers', type=int, default=2)
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    parser.add_argument('--tcn_layers', type=int, default=3)
+    parser.add_argument('--tcn_layers', type=int, default=5)
     parser.add_argument('--tcn_conv_drop', type=float, default=0.35)
     parser.add_argument('--tcn_fc_drop', type=float, default=0.3)
     parser.add_argument('--tcn_hid_dim', type=int, default=128)
     parser.add_argument('--tcn_out_dim', type=int, default=768)
-    parser.add_argument('--tcn_kernel_size', type=int, default=15)
+    parser.add_argument('--tcn_kernel_size', type=int, default=7)
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     parser.add_argument('--window_size', type=int, default=16)
     parser.add_argument('--sent_drop_prob', type=float, default=0.1)
