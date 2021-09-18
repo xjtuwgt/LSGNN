@@ -187,7 +187,7 @@ class SeqGNNEmbeddings(nn.Module):
     def forward(self, input_ids=None, token_type_ids=None):
         input_shape = input_ids.size()
         if token_type_ids is None:
-            token_type_ids = torch.zeros(input_shape, dtype=torch.long, device=self.position_ids.device)
+            token_type_ids = torch.zeros(input_shape, dtype=torch.long, device=self.input_ids.device)
         inputs_embeds = self.word_embeddings(input_ids)
         token_type_embeddings = self.token_type_embeddings(token_type_ids)
         embeddings = inputs_embeds + token_type_embeddings
