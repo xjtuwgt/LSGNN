@@ -150,15 +150,66 @@
 #         # print(true_anwer, decoded_true_answer)
 #     break
 
-from core.seqgnn_tokenizer import SegGNNTokenizer
-from wikihop.transformer_datautils import load_wikihop_tokenizer
-tokenizer_file_name = 'allenai/longformer-base-4096'
-sg_tokenizer = SegGNNTokenizer.from_pretrained(tokenizer_file_name)
+# from core.seqgnn_tokenizer import SegGNNTokenizer
+# from wikihop.transformer_datautils import load_wikihop_tokenizer
+# tokenizer_file_name = 'allenai/longformer-base-4096'
+# sg_tokenizer = SegGNNTokenizer.from_pretrained(tokenizer_file_name)
+#
+#
+# print(sg_tokenizer.special_tokens_map)
+# print(sg_tokenizer.vocab_size)
+#
+# wiki_sg_tokenizer = load_wikihop_tokenizer(pretrained_file_name=tokenizer_file_name)
+# print(wiki_sg_tokenizer.vocab_size)
+# print(wiki_sg_tokenizer.special_tokens_map)
 
+from wikihop.argument_parser import default_parser, complete_default_parser, json_to_argv
+from wikihop.datahelper import DataHelper
+import logging
+import torch
+from tqdm import tqdm, trange
+from tensorboardX import SummaryWriter
+import gc
+import sys
+from wikihop.datautils import wikihop2dictionary
+from core.embedding_utils import WordEmbedding
+from os.path import join
+from time import time
+from core.gpu_utils import get_single_free_gpu
+from core.gnn_encoder import GDTEncoder
+from core.lstm_gnn_encoder import LSTMGDTEncoder
+from core.tcn_gnn_encoder import TCNGDTEncoder
+from wikihop.lossutils import ce_loss_computation as loss_function
+# from wikihop.lossutils import bce_loss_computation as loss_function
+from wikihop.modelutils import wikihop_model_evaluation
 
-print(sg_tokenizer.special_tokens_map)
-print(sg_tokenizer.vocab_size)
+logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
+                    datefmt='%m/%d/%Y %H:%M:%S',
+                    level=logging.INFO)
+logger = logging.getLogger(__name__)
+# #########################################################################
+# # Initialize arguments
+# ##########################################################################
+parser = default_parser()
+logger.info("IN CMD MODE")
+logger.info("Pytorch version = {}".format(torch.__version__))
+args_config_provided = parser.parse_args(sys.argv[1:])
+if args_config_provided.config_file is not None:
+    argv = json_to_argv(args_config_provided.config_file) + sys.argv[1:]
+else:
+    argv = sys.argv[1:]
+args = parser.parse_args(argv)
+# ##########################################################################
+args.word_embed_type = 'seq_gnn'
+args = complete_default_parser(args=args)
+for key, value in vars(args).items():
+    logging.info('{}\t{}'.format(key, value))
+logger.info("IN CMD MODE")
+logger.info("PyTorch version = {}".format(torch.__version__))
 
-wiki_sg_tokenizer = load_wikihop_tokenizer(pretrained_file_name=tokenizer_file_name)
-print(wiki_sg_tokenizer.vocab_size)
-print(wiki_sg_tokenizer.special_tokens_map)
+from core.seq_gnn_encoder import SeqTCNGDTEncoder
+
+model = SeqTCNGDTEncoder(config=args)
+
+for name, param in model.named_parameters():
+    logging.info('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))

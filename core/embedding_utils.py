@@ -178,6 +178,11 @@ class SeqGNNEmbeddings(nn.Module):
         self.word_embeddings = nn.Embedding(vocab_size, hidden_size, padding_idx=pad_token_id)
         self.token_type_embeddings = nn.Embedding(type_vocab_size, hidden_size)
         self.LayerNorm = nn.LayerNorm(hidden_size, eps=layer_norm_eps)
+        self.initial_parameters()
+
+    def initial_parameters(self):
+        nn.init.xavier_normal_(self.word_embeddings.weight.data, gain=0.01)
+        nn.init.xavier_normal_(self.token_type_embeddings.weight.data, gain=0.01)
 
     def forward(self, input_ids=None, token_type_ids=None):
         input_shape = input_ids.size()
