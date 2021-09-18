@@ -406,11 +406,11 @@ class TemporalBlock(nn.Module):
     def __init__(self, ni, nf, ks, stride, dilation, padding, dropout=0.):
         super(TemporalBlock, self).__init__()
         # print(stride, padding, dilation, ni, nf, ks)
-        self.conv1 = weight_norm(nn.Conv1d(ni,nf,ks,stride=stride,padding=padding,dilation=dilation))
+        self.conv1 = weight_norm(nn.Conv1d(ni, nf, ks, stride=stride, padding=padding, dilation=dilation))
         self.chomp1 = Chomp1d(padding)
         self.relu1 = nn.ReLU()
         self.dropout1 = nn.Dropout(dropout)
-        self.conv2 = weight_norm(nn.Conv1d(nf,nf,ks,stride=stride,padding=padding,dilation=dilation))
+        self.conv2 = weight_norm(nn.Conv1d(nf, nf, ks, stride=stride, padding=padding, dilation=dilation))
         self.chomp2 = Chomp1d(padding)
         self.relu2 = nn.ReLU()
         self.dropout2 = nn.Dropout(dropout)
@@ -473,7 +473,7 @@ class TCN(nn.Module):
         self.encoder = TemporalConvNet(c_in, layers, ks=ks, dropout=conv_dropout)
         self.gap = GAP1d()
         self.dropout = nn.Dropout(fc_dropout) if fc_dropout else None
-        self.linear = nn.Linear(layers[-1],c_out)
+        self.linear = nn.Linear(layers[-1], c_out)
         self.init_weights()
 
     def init_weights(self):
