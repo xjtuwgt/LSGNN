@@ -6,6 +6,7 @@ from torch import LongTensor
 import math
 import pickle #Parrallel precessing
 from torch import nn
+from core.layernorm_utils import ScaleNorm as layer_norm
 from core.layers import small_init_gain
 
 QUERY_START = '[Q]'
@@ -178,7 +179,8 @@ class SeqGNNEmbeddings(nn.Module):
         super().__init__()
         self.word_embeddings = nn.Embedding(vocab_size, hidden_size, padding_idx=pad_token_id)
         self.token_type_embeddings = nn.Embedding(type_vocab_size, hidden_size)
-        self.LayerNorm = nn.LayerNorm(hidden_size, eps=layer_norm_eps)
+        # self.LayerNorm = nn.LayerNorm(hidden_size, eps=layer_norm_eps)
+        self.LayerNorm = layer_norm(hidden_size, eps=layer_norm_eps)
         self.hidden_dim = hidden_size
         self.initial_parameters()
 
