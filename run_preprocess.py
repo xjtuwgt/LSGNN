@@ -70,7 +70,7 @@ def wikihop_train_dev_tokenize(args):
     print('Saving {} examples in {}'.format(len(wikihop_vocab_dict), wikihop_vocab_file_name))
 
 
-def wikihop_train_dev_decoder(args, customer=True):
+def wikihop_train_dev_dump_features(args, customer=True):
     for key, value in vars(args).items():
         print('{}\t{}'.format(key, value))
     print('*' * 90)
@@ -111,13 +111,13 @@ def wikihop_train_dev_seq_gnn_dump_features(args):
     assert args.word_embed_type == 'seq_gnn'
     tokenizer = load_wikihop_tokenizer(args.tokenizer_name)
     train_example_file_name = join(PREPROCESS_FOLDER, args.word_embed_type + '.' +args.token_train_name)
-    processed_train_data_name = join(PREPROCESS_FOLDER, args.word_embed_type + '.' + args.decode_train_name)
+    processed_train_data_name = join(PREPROCESS_FOLDER, args.word_embed_type + '.wikihop.' + args.decode_train_name)
     train_dump_examples = wikihop_seq_gnn_dump_features(example_file_name=train_example_file_name, tokenizer=tokenizer)
     with gzip.open(processed_train_data_name, 'wb') as fout:
         pickle.dump(train_dump_examples, fout)
     print('Saving {} examples in {}'.format(len(train_dump_examples), processed_train_data_name))
 
-    dev_example_file_name = join(PREPROCESS_FOLDER, args.word_embed_type + '.' + args.token_dev_name)
+    dev_example_file_name = join(PREPROCESS_FOLDER, args.word_embed_type + '.wikihop.' + args.token_dev_name)
     processed_dev_data_name = join(PREPROCESS_FOLDER, args.word_embed_type + '.' + args.decode_dev_name)
     dev_dump_examples = wikihop_seq_gnn_dump_features(example_file_name=dev_example_file_name, tokenizer=tokenizer)
     with gzip.open(processed_dev_data_name, 'wb') as fout:
@@ -271,12 +271,12 @@ if __name__ == '__main__':
     # restore_glove_word_embeddings(args=args)
 
     # Step 3: dump-features: tokens map to ids
-    # wikihop_train_dev_decoder(args=args)
+    # wikihop_train_dev_dump_features(args=args)
     # args.word_embed_type = 'glove'
-    # wikihop_train_dev_decoder(args=args)
+    # wikihop_train_dev_dump_features(args=args)
 
     # # Step 4: data analysis
-    # args.word_embed_type = 'seq_gnn'
-    # wiki_hop_train_dev_seq_gnn_preprocess(args=args)
+    args.word_embed_type = 'seq_gnn'
+    wiki_hop_train_dev_seq_gnn_preprocess(args=args)
 
     # wikihop_data_analysis(args=args)
