@@ -14,6 +14,7 @@ from core.gpu_utils import get_single_free_gpu
 from core.gnn_encoder import GDTEncoder
 from core.lstm_gnn_encoder import LSTMGDTEncoder
 from core.tcn_gnn_encoder import TCNGDTEncoder
+from core.seq_gnn_encoder import SeqTCNGDTEncoder
 from wikihop.lossutils import ce_loss_computation as loss_function
 # from wikihop.lossutils import bce_loss_computation as loss_function
 from wikihop.modelutils import wikihop_model_evaluation
@@ -47,7 +48,10 @@ train_data_loader = data_helper.wikihop_train_dataloader
 
 # model = GDTEncoder(config=args)
 # model = LSTMGDTEncoder(config=args)
-model = TCNGDTEncoder(config=args)
+if args.word_embed_type == 'seq_gnn':
+    model = SeqTCNGDTEncoder(config=args)
+else:
+    model = TCNGDTEncoder(config=args)
 model.to(args.device)
 # #########################################################################
 # # Show model information
