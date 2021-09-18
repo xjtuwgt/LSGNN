@@ -198,7 +198,7 @@ def wiki_hop_train_dev_seq_gnn_preprocess(args):
     for key, value in vars(args).items():
         print('{}\t{}'.format(key, value))
     print('*' * 90)
-    wikihop_train_dev_seq_graph_tokenize_examples(args=args)
+    # wikihop_train_dev_seq_graph_tokenize_examples(args=args)
     wikihop_train_dev_seq_gnn_dump_features(args=args)
 
 def wikihop_data_analysis(args):
