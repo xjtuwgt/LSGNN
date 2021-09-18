@@ -271,12 +271,12 @@ if __name__ == '__main__':
     # restore_glove_word_embeddings(args=args)
 
     # Step 3: dump-features: tokens map to ids
-    # wikihop_train_dev_decoder(args=args)
-    # args.word_embed_type = 'glove'
-    # wikihop_train_dev_decoder(args=args)
+    wikihop_train_dev_decoder(args=args)
+    args.word_embed_type = 'glove'
+    wikihop_train_dev_decoder(args=args)
 
     # # Step 4: data analysis
-    args.word_embed_type = 'seq_gnn'
-    wiki_hop_train_dev_seq_gnn_preprocess(args=args)
+    # args.word_embed_type = 'seq_gnn'
+    # wiki_hop_train_dev_seq_gnn_preprocess(args=args)
 
     # wikihop_data_analysis(args=args)
