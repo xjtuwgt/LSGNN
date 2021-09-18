@@ -2,6 +2,7 @@ from torch.utils.data import DataLoader
 from wikihop.ioutils import load_gz_file
 from core.embedding_utils import load_pretrained_embedding_vocab_dict
 from wikihop.wikihopdataset import WikihopTrainDataSet, WikihopDevDataSet, graph_collate_fn, graph_seq_collate_fn
+from wikihop.transformer_datautils import load_wikihop_tokenizer
 from envs import PREPROCESS_FOLDER
 from os.path import join
 
@@ -20,11 +21,17 @@ class DataHelper(object):
             self.word_embed_file_name = self.config.glove_model
         elif self.word_embed_type == 'fasttext':
             self.word_embed_file_name = self.config.fasttext_model
+        elif self.word_embed_type == 'seq_gnn':
+            self.word_embed_file_name = self.config.seq_gnn_tokenizer_name
         else:
             raise '{} is not supported'.format(self.word_embed_file_name)
-        self.pre_trained_name = join(self.config.db_path, 'models', self.word_embed_file_name)
-        _, _, self.special_token_dict = load_pretrained_embedding_vocab_dict(embeding_file_name=self.pre_trained_name)
-        self.pad_id = self.special_token_dict['pad_token']
+        if self.word_embed_type == 'glove' or self.word_embed_type == 'fasttext':
+            self.pre_trained_name = join(self.config.db_path, 'models', self.word_embed_file_name)
+            _, _, self.special_token_dict = load_pretrained_embedding_vocab_dict(embeding_file_name=self.pre_trained_name)
+            self.pad_id = self.special_token_dict['pad_token']
+        else:
+            tokenizer = load_wikihop_tokenizer(pretrained_file_name=self.word_embed_file_name)
+            self.pad_id = tokenizer.pad_token_id
 
     @property
     def wikihop_train_dataloader(self) -> DataLoader:
