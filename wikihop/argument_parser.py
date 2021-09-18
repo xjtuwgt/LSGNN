@@ -141,7 +141,7 @@ def default_parser():
     parser.add_argument('--tcn_conv_drop', type=float, default=0.35)
     parser.add_argument('--tcn_fc_drop', type=float, default=0.3)
     parser.add_argument('--tcn_hid_dim', type=int, default=128)
-    parser.add_argument('--tcn_out_dim', type=int, default=256)
+    parser.add_argument('--tcn_out_dim', type=int, default=300)
     parser.add_argument('--tcn_kernel_size', type=int, default=15)
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     parser.add_argument('--window_size', type=int, default=16)
