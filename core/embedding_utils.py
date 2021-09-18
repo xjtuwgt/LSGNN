@@ -6,6 +6,7 @@ from torch import LongTensor
 import math
 import pickle #Parrallel precessing
 from torch import nn
+from core.utils import small_init_gain
 
 QUERY_START = '[Q]'
 QUERY_END = '[/Q]'
@@ -178,11 +179,13 @@ class SeqGNNEmbeddings(nn.Module):
         self.word_embeddings = nn.Embedding(vocab_size, hidden_size, padding_idx=pad_token_id)
         self.token_type_embeddings = nn.Embedding(type_vocab_size, hidden_size)
         self.LayerNorm = nn.LayerNorm(hidden_size, eps=layer_norm_eps)
+        self.hidden_dim = hidden_size
         self.initial_parameters()
 
     def initial_parameters(self):
-        nn.init.xavier_normal_(self.word_embeddings.weight.data, gain=0.01)
-        nn.init.xavier_normal_(self.token_type_embeddings.weight.data, gain=0.01)
+        gain = small_init_gain(d_in=self.hidden_dim, d_out=self.hidden_dim)
+        nn.init.xavier_normal_(self.word_embeddings.weight.data, gain=gain)
+        nn.init.xavier_normal_(self.token_type_embeddings.weight.data, gain=gain)
 
     def forward(self, input_ids=None, token_type_ids=None):
         input_shape = input_ids.size()

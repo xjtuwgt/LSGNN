@@ -4,6 +4,7 @@ from core.embedding_utils import RelationEmbedding, SeqGNNNodeEmbedding
 import torch
 from dgl.nn.pytorch.utils import Identity
 # from torch.nn import LayerNorm as layer_norm
+from core.utils import small_init_gain
 from core.layernorm_utils import ScaleNorm as layer_norm
 import dgl.function as fn
 from dgl.nn.functional import edge_softmax
@@ -143,9 +144,6 @@ class PositionwiseFeedForward(nn.Module):
         nn.init.xavier_normal_(self.w_1.weight, gain=gain)
         gain = small_init_gain(d_in=self.hidden_dim, d_out=self.model_dim)
         nn.init.xavier_normal_(self.w_2.weight, gain=gain)
-
-def small_init_gain(d_in, d_out):
-    return 2.0/(d_in + 4.0 * d_out)
 
 class RGDTLayer(nn.Module):
     def __init__(self,
