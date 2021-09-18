@@ -10,8 +10,8 @@ import argparse
 import itertools
 from tqdm import tqdm
 from core.embedding_utils import WordEmbedding
-from wikihop.transformer_datautils import wikihop_longformer_example_extraction, wikihop_longformer_dump_features
-from transformers import LongformerTokenizer
+from wikihop.transformer_datautils import wikihop_seg_gnn_example_extraction, wikihop_seq_gnn_dump_features
+from wikihop.transformer_datautils import load_wikihop_tokenizer
 
 def wikihop_example_process(data_name, is_train_data=True):
     if is_train_data:
@@ -21,27 +21,27 @@ def wikihop_example_process(data_name, is_train_data=True):
     examples = wikihop_example_extraction(data=data)
     return examples
 
-def wikihop_example_longformer_process(data_name, args, is_train_data=True):
+def wikihop_example_seq_graph_process(data_name, args, is_train_data=True):
     if is_train_data:
         data = load_train_wikihop_data(train_data_name=data_name)
     else:
         data = load_dev_wikihop_data(dev_data_name=data_name)
-    tokenizer = LongformerTokenizer.from_pretrained(args.roberta_model)
-    examples = wikihop_longformer_example_extraction(data=data, tokenizer=tokenizer)
+    tokenizer = load_wikihop_tokenizer(pretrained_file_name=args.tokenizer_name)
+    examples = wikihop_seg_gnn_example_extraction(data=data, tokenizer=tokenizer)
     return examples
 
-def wikihop_train_dev_graph_tokenize(args):
-    assert args.word_embed_type == 'longformer_large'
+def wikihop_train_dev_seq_graph_tokenize_examples(args):
+    assert args.word_embed_type == 'seq_gnn'
     train_data_name = join(HOME_DATA_FOLDER, 'wikihop', args.train_name)
     processed_train_data_name = join(PREPROCESS_FOLDER, args.word_embed_type + '.' + args.token_train_name)
-    train_examples = wikihop_example_longformer_process(data_name=train_data_name, args=args, is_train_data=True)
+    train_examples = wikihop_example_seq_graph_process(data_name=train_data_name, args=args, is_train_data=True)
     with gzip.open(processed_train_data_name, 'wb') as fout:
         pickle.dump(train_examples, fout)
     print('Saving {} examples in {}'.format(len(train_examples), processed_train_data_name))
 
     dev_data_name = join(HOME_DATA_FOLDER, 'wikihop', args.dev_name)
     processed_dev_data_name = join(PREPROCESS_FOLDER, args.word_embed_type + '.' + args.token_dev_name)
-    dev_examples = wikihop_example_longformer_process(data_name=dev_data_name, args=args, is_train_data=False)
+    dev_examples = wikihop_example_seq_graph_process(data_name=dev_data_name, args=args, is_train_data=False)
     with gzip.open(processed_dev_data_name, 'wb') as fout:
         pickle.dump(dev_examples, fout)
     print('Saving {} examples in {}'.format(len(dev_examples), processed_dev_data_name))
@@ -102,22 +102,22 @@ def wikihop_train_dev_decoder(args, customer=True):
     print('Saving {} examples in {}'.format(len(dev_examples), processed_dev_data_name))
 
 
-def wikihop_train_dev_longformer_decoder(args):
-    assert args.word_embed_type == 'longformer_large'
-    tokenizer = LongformerTokenizer.from_pretrained(args.longformer_model)
+def wikihop_train_dev_seq_gnn_dump_features(args):
+    assert args.word_embed_type == 'seq_gnn'
+    tokenizer = load_wikihop_tokenizer(args.tokenizer_name)
     train_example_file_name = join(PREPROCESS_FOLDER, args.word_embed_type + '.' +args.token_train_name)
     processed_train_data_name = join(PREPROCESS_FOLDER, args.word_embed_type + '.' + args.decode_train_name)
-    train_examples = wikihop_longformer_dump_features(example_file_name=train_example_file_name, tokenizer=tokenizer)
+    train_dump_examples = wikihop_seq_gnn_dump_features(example_file_name=train_example_file_name, tokenizer=tokenizer)
     with gzip.open(processed_train_data_name, 'wb') as fout:
-        pickle.dump(train_examples, fout)
-    print('Saving {} examples in {}'.format(len(train_examples), processed_train_data_name))
+        pickle.dump(train_dump_examples, fout)
+    print('Saving {} examples in {}'.format(len(train_dump_examples), processed_train_data_name))
 
     dev_example_file_name = join(PREPROCESS_FOLDER, args.word_embed_type + '.' + args.token_dev_name)
     processed_dev_data_name = join(PREPROCESS_FOLDER, args.word_embed_type + '.' + args.decode_dev_name)
-    dev_examples = wikihop_longformer_dump_features(example_file_name=dev_example_file_name, tokenizer=tokenizer)
+    dev_dump_examples = wikihop_seq_gnn_dump_features(example_file_name=dev_example_file_name, tokenizer=tokenizer)
     with gzip.open(processed_dev_data_name, 'wb') as fout:
-        pickle.dump(dev_examples, fout)
-    print('Saving {} examples in {}'.format(len(dev_examples), processed_dev_data_name))
+        pickle.dump(dev_dump_examples, fout)
+    print('Saving {} examples in {}'.format(len(dev_dump_examples), processed_dev_data_name))
 
 def wikihop_vocab_collection(train_data: dict, dev_data: dict):
     def vocab_collection(data: dict, voc_dict: dict):
@@ -183,6 +183,10 @@ def restore_glove_word_embeddings(args, customer=True):
                              word2index_name=glove_model_dat_word2idx,
                              dim=300, customer_word_dict=wikihop_vocab_dict)
 
+def wiki_hop_train_dev_seq_gnn_preprocess(args):
+    wikihop_train_dev_seq_graph_tokenize_examples(args=args)
+    wikihop_train_dev_seq_gnn_dump_features(args=args)
+
 def wikihop_data_analysis(args):
     processed_train_data_name = join(PREPROCESS_FOLDER, args.word_embed_type + '.' + args.decode_train_name)
     processed_dev_data_name = join(PREPROCESS_FOLDER, args.word_embed_type + '.' + args.decode_dev_name)
@@ -239,6 +243,7 @@ if __name__ == '__main__':
     parser.add_argument('--glove_model', type=str, default='glove.840B.300d')
     parser.add_argument('--word_embed_type', type=str, default='fasttext')
     parser.add_argument('--add_special_token', type=boolean_string, default='true')
+    parser.add_argument('--tokenizer_name', type=str, default='allenai/longformer-base-4096')
     args = parser.parse_args()
     for key, value in vars(args).items():
         print('{}\t{}'.format(key, value))
@@ -252,9 +257,12 @@ if __name__ == '__main__':
     # restore_glove_word_embeddings(args=args)
 
     # Step 3: dump-features: tokens map to ids
-    wikihop_train_dev_decoder(args=args)
-    args.word_embed_type = 'glove'
-    wikihop_train_dev_decoder(args=args)
+    # wikihop_train_dev_decoder(args=args)
+    # args.word_embed_type = 'glove'
+    # wikihop_train_dev_decoder(args=args)
 
-    # # Step 3: data analysis
+    # # Step 4: data analysis
+    args.word_embed_type = 'seq_gnn'
+    wiki_hop_train_dev_seq_gnn_preprocess(args=args)
+
     # wikihop_data_analysis(args=args)
