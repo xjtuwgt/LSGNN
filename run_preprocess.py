@@ -117,8 +117,8 @@ def wikihop_train_dev_seq_gnn_dump_features(args):
         pickle.dump(train_dump_examples, fout)
     print('Saving {} examples in {}'.format(len(train_dump_examples), processed_train_data_name))
 
-    dev_example_file_name = join(PREPROCESS_FOLDER, args.word_embed_type + '.wikihop.' + args.token_dev_name)
-    processed_dev_data_name = join(PREPROCESS_FOLDER, args.word_embed_type + '.' + args.decode_dev_name)
+    dev_example_file_name = join(PREPROCESS_FOLDER, args.word_embed_type + '.' + args.token_dev_name)
+    processed_dev_data_name = join(PREPROCESS_FOLDER, args.word_embed_type + '.wikihop.' + args.decode_dev_name)
     dev_dump_examples = wikihop_seq_gnn_dump_features(example_file_name=dev_example_file_name, tokenizer=tokenizer)
     with gzip.open(processed_dev_data_name, 'wb') as fout:
         pickle.dump(dev_dump_examples, fout)
