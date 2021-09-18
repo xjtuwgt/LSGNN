@@ -81,7 +81,8 @@ def wikihop_dump_features(example_file_name: str, word_embedder: WordEmbedding, 
         query_tokens, candidates_tokens, supports_tokens, answer_label_idx = example_values
         if add_special_token:
             #+++++++++++
-            query_tokens[0] = [word_embedder.special_token_dict['query_start']] + query_tokens[0]
+            query_tokens[0] = [word_embedder.special_token_dict['cls_token'], word_embedder.special_token_dict['query_start']] \
+                              + query_tokens[0]
             query_tokens[-1] = query_tokens[-1] + [word_embedder.special_token_dict['query_end']]
             candidates_tokens = [[word_embedder.special_token_dict['entity_start']] + candidate +
                                  [word_embedder.special_token_dict['entity_end']] for candidate in candidates_tokens]
