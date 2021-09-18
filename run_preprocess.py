@@ -2,7 +2,6 @@ from os.path import join
 from wikihop.ioutils import load_gz_file, load_train_wikihop_data, load_dev_wikihop_data
 from wikihop.datautils import wikihop_example_extraction, wikihop_dump_features
 from core.pretrianed_word_embed_store import restore_fasttext_pretrained, restore_glove_pretrained
-from core.embedding_utils import load_pretrained_embedding_ndarray
 import gzip, pickle
 from wikihop.argument_parser import boolean_string
 from envs import HOME_DATA_FOLDER, PRETRAINED_MODEL_FOLDER, PREPROCESS_FOLDER
