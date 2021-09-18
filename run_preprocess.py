@@ -50,14 +50,14 @@ def wikihop_train_dev_tokenize(args):
         print('{}\t{}'.format(key, value))
     print('*' * 90)
     train_data_name = join(HOME_DATA_FOLDER, 'wikihop', args.train_name)
-    processed_train_data_name = join(PREPROCESS_FOLDER, args.token_train_name)
+    processed_train_data_name = join(PREPROCESS_FOLDER, 'nltk.' + args.token_train_name)
     train_examples = wikihop_example_process(data_name=train_data_name, is_train_data=True)
     with gzip.open(processed_train_data_name, 'wb') as fout:
         pickle.dump(train_examples, fout)
     print('Saving {} examples in {}'.format(len(train_examples), processed_train_data_name))
 
     dev_data_name = join(HOME_DATA_FOLDER, 'wikihop', args.dev_name)
-    processed_dev_data_name = join(PREPROCESS_FOLDER, args.token_dev_name)
+    processed_dev_data_name = join(PREPROCESS_FOLDER, 'nltk.' + args.token_dev_name)
     dev_examples = wikihop_example_process(data_name=dev_data_name, is_train_data=False)
     with gzip.open(processed_dev_data_name, 'wb') as fout:
         pickle.dump(dev_examples, fout)
@@ -86,7 +86,7 @@ def wikihop_train_dev_decoder(args, customer=True):
             word_embedder = WordEmbedding(pre_trained_name=join(PRETRAINED_MODEL_FOLDER, args.glove_model))
     else:
         raise 'wrong word embedding type = {}'.format(args.word_embed_type)
-    train_example_file_name = join(PREPROCESS_FOLDER, args.token_train_name)
+    train_example_file_name = join(PREPROCESS_FOLDER, 'nltk.' + args.token_train_name)
     if customer:
         processed_train_data_name = join(PREPROCESS_FOLDER, args.word_embed_type + '.wikihop.' + args.decode_train_name)
     else:
@@ -96,7 +96,7 @@ def wikihop_train_dev_decoder(args, customer=True):
         pickle.dump(train_examples, fout)
     print('Saving {} examples in {}'.format(len(train_examples), processed_train_data_name))
 
-    dev_example_file_name = join(PREPROCESS_FOLDER, args.token_dev_name)
+    dev_example_file_name = join(PREPROCESS_FOLDER, 'nltk.' + args.token_dev_name)
     if customer:
         processed_dev_data_name = join(PREPROCESS_FOLDER, args.word_embed_type + '.wikihop.' + args.decode_dev_name)
     else:
@@ -271,9 +271,9 @@ if __name__ == '__main__':
     # restore_glove_word_embeddings(args=args)
 
     # Step 3: dump-features: tokens map to ids
-    wikihop_train_dev_decoder(args=args)
-    args.word_embed_type = 'glove'
-    wikihop_train_dev_decoder(args=args)
+    # wikihop_train_dev_decoder(args=args)
+    # args.word_embed_type = 'glove'
+    # wikihop_train_dev_decoder(args=args)
 
     # # Step 4: data analysis
     # args.word_embed_type = 'seq_gnn'
