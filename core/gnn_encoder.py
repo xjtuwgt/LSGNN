@@ -6,9 +6,9 @@ from dgl.nn.pytorch.utils import Identity
 # from torch.nn import LayerNorm as layer_norm
 from core.utils import small_init_gain
 from core.layernorm_utils import ScaleNorm as layer_norm
+from core.utils import PositionwiseFeedForward
 import dgl.function as fn
 from dgl.nn.functional import edge_softmax
-import torch.nn.functional as F
 from dgl.base import DGLError
 from torch import Tensor
 from transformers import AdamW, get_linear_schedule_with_warmup, get_cosine_schedule_with_warmup, \
@@ -123,28 +123,7 @@ class GDTEncoder(nn.Module):
         return optimizer, scheduler
 
 #######################################################################################################################
-#######################################################################################################################v
-class PositionwiseFeedForward(nn.Module):
-    "Implements FFN equation."
-    def __init__(self, model_dim, d_hidden, dropout=0.1):
-        super(PositionwiseFeedForward, self).__init__()
-        self.model_dim = model_dim
-        self.hidden_dim = d_hidden
-        self.w_1 = nn.Linear(model_dim, d_hidden)
-        self.w_2 = nn.Linear(d_hidden, model_dim)
-        self.dropout = nn.Dropout(dropout)
-        self.init()
-
-    def forward(self, x):
-        return self.w_2(self.dropout(F.relu(self.w_1(x))))
-
-    def init(self):
-        # gain = nn.init.calculate_gain('relu')
-        gain = small_init_gain(d_in=self.model_dim, d_out=self.hidden_dim)
-        nn.init.xavier_normal_(self.w_1.weight, gain=gain)
-        gain = small_init_gain(d_in=self.hidden_dim, d_out=self.model_dim)
-        nn.init.xavier_normal_(self.w_2.weight, gain=gain)
-
+#######################################################################################################################
 class RGDTLayer(nn.Module):
     def __init__(self,
                  in_ent_feats: int,
