@@ -6,7 +6,7 @@ from torch import LongTensor
 import math
 import pickle #Parrallel precessing
 from torch import nn
-from core.utils import small_init_gain
+from core.layers import small_init_gain
 
 QUERY_START = '[Q]'
 QUERY_END = '[/Q]'

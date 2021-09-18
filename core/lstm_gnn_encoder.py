@@ -5,8 +5,8 @@ from core.layernorm_utils import ScaleNorm as layer_norm
 from transformers import AdamW, get_linear_schedule_with_warmup, get_cosine_schedule_with_warmup, \
     get_cosine_with_hard_restarts_schedule_with_warmup
 from core.optimizer_utils import RAdam
-from core.gnn_encoder import RGDTLayer, GDTLayer
-from core.lstm_layers import LSTMWrapper
+from core.layers import RGDTLayer, GDTLayer
+from core.layers import LSTMWrapper
 
 class LSTMGDTEncoder(nn.Module):
     def __init__(self, config):
