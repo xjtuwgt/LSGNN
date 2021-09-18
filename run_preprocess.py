@@ -30,7 +30,7 @@ def wikihop_example_longformer_process(data_name, args, is_train_data=True):
     examples = wikihop_longformer_example_extraction(data=data, tokenizer=tokenizer)
     return examples
 
-def wikihop_train_dev_roberta_tokenize(args):
+def wikihop_train_dev_graph_tokenize(args):
     assert args.word_embed_type == 'longformer_large'
     train_data_name = join(HOME_DATA_FOLDER, 'wikihop', args.train_name)
     processed_train_data_name = join(PREPROCESS_FOLDER, args.word_embed_type + '.' + args.token_train_name)

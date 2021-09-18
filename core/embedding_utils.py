@@ -172,6 +172,22 @@ class SeqGNNNodeEmbedding(nn.Module):
             embeddings = inp_emb
         return embeddings
 
+class SeqGNNEmbeddings(nn.Module):
+    def __init__(self, vocab_size: int, hidden_size: int, pad_token_id, type_vocab_size=2, layer_norm_eps=1e-6):
+        super().__init__()
+        self.word_embeddings = nn.Embedding(vocab_size, hidden_size, padding_idx=pad_token_id)
+        self.token_type_embeddings = nn.Embedding(type_vocab_size, hidden_size)
+        self.LayerNorm = nn.LayerNorm(hidden_size, eps=layer_norm_eps)
+
+    def forward(self, input_ids=None, token_type_ids=None):
+        input_shape = input_ids.size()
+        if token_type_ids is None:
+            token_type_ids = torch.zeros(input_shape, dtype=torch.long, device=self.position_ids.device)
+        inputs_embeds = self.word_embeddings(input_ids)
+        token_type_embeddings = self.token_type_embeddings(token_type_ids)
+        embeddings = inputs_embeds + token_type_embeddings
+        embeddings = self.LayerNorm(embeddings)
+        return embeddings
 
 
 if __name__ == '__main__':

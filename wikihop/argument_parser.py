@@ -8,6 +8,7 @@ import numpy as np
 from os.path import join
 from envs import OUTPUT_FOLDER, HOME_DATA_FOLDER
 from core.gpu_utils import get_single_free_gpu
+from wikihop.transformer_datautils import load_wikihop_tokenizer
 
 logger = logging.getLogger(__name__)
 def boolean_string(s):
@@ -55,6 +56,10 @@ def complete_default_parser(args):
     if args.relative_position:
         args.num_relations = 2 * args.window_size + 1
         args.add_position = False
+    if args.word_embed_type == 'seq_gnn':
+        seq_gnn_tokenizer = load_wikihop_tokenizer(pretrained_file_name=args.seq_gnn_tokenizer_name)
+        args.seq_gnn_vocab_size = len(seq_gnn_tokenizer)
+        args.seq_gnn_pad_id = seq_gnn_tokenizer.pad_token_id
     #+++++++++++++++
     if HOME_DATA_FOLDER.startswith('/dfs/scratch0'):
         args.stanford = 'true'
@@ -110,6 +115,11 @@ def default_parser():
     parser.add_argument('--glove_model', type=str, default='glove.840B.300d')
     parser.add_argument('--word_embed_type', type=str, default='glove')
     parser.add_argument('--customer', type=boolean_string, default='true')
+    # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    parser.add_argument('--seq_gnn_vocab_size', type=int, default=None)
+    parser.add_argument('--seq_gnn_tokenizer_name', type=str, default='allenai/longformer-base-4096')
+    parser.add_argument('--seq_gnn_pad_id', type=int, default=None)
+    parser.add_argument('--seq_gnn_hidden_dim', type=int, default=100)
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     parser.add_argument('--relation_emb_gamma', type=float, default=0.1)
     parser.add_argument('--relation_emb_dim', type=int, default=300)
