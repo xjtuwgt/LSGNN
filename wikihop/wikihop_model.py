@@ -8,6 +8,7 @@ from core.optimizer_utils import RAdam
 class SeqGNNWikiHopModel(nn.Module):
     def __init__(self, config):
         super(SeqGNNWikiHopModel, self).__init__()
+        self.config = config
         if self.config.encoder_type == 'seq_tcn':
             self.encoder = SeqTCNGDTEncoder(config=config)
         elif self.config.encoder_type == 'tcn':
