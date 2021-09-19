@@ -216,7 +216,7 @@ class SeqTCNGDTEncoder(nn.Module):
         assert self.word_embed_type == 'seq_gnn'
         self.node_embedder = SeqGNNEmbeddings(vocab_size=self.config.seq_gnn_vocab_size,
                                               pad_token_id=self.config.seq_gnn_pad_id,
-                                              hidden_size=self.config.seq_gnn_word_hidden_dim)
+                                              hidden_size=self.config.seq_gnn_word_emb_dim)
         self.tcn_encoder = TCNWrapper(c_in=self.config.seq_gnn_word_emb_dim, layers=[self.config.tcn_hid_dim] * self.config.tcn_layers,
                                         c_out=self.config.tcn_out_dim, conv_dropout=self.config.tcn_conv_drop,
                                       fc_dropout=self.config.tcn_fc_drop, ks=self.config.tcn_kernel_size)
