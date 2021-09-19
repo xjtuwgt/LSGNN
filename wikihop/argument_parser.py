@@ -53,7 +53,7 @@ def complete_default_parser(args):
     # ++++++++++++++
     if args.debug:
         args.eval_interval_ratio = 0.5
-    if args.relative_position:
+    if args.graph_relative_position:
         args.num_relations = 2 * args.window_size + 1
         args.add_position = False
     if args.encoder_type in {'seq_tcn'}:
