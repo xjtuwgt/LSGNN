@@ -20,7 +20,7 @@ class SeqGNNWikiHopModel(nn.Module):
         else:
             raise '{} is not supported'.format(self.config.encoder_type)
         self.final_layer_norm = layer_norm(self.config.hidden_dim)
-        self.answer_prediction_layer = nn.Linear(in_features= self.config.hidden_dim, out_features=1)
+        self.answer_prediction_layer = nn.Linear(in_features = self.config.hidden_dim, out_features=1)
 
     def forward(self, batch: dict):
         node_embed = self.encoder.forward(batch=batch)
