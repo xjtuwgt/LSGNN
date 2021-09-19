@@ -119,7 +119,7 @@ def default_parser():
     parser.add_argument('--seq_gnn_vocab_size', type=int, default=None)
     parser.add_argument('--seq_gnn_tokenizer_name', type=str, default='allenai/longformer-base-4096')
     parser.add_argument('--seq_gnn_pad_id', type=int, default=None)
-    parser.add_argument('--seq_gnn_hidden_dim', type=int, default=768)
+    parser.add_argument('--seq_gnn_word_hidden_dim', type=int, default=384)
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     parser.add_argument('--relation_emb_gamma', type=float, default=0.1)
     parser.add_argument('--relation_emb_dim', type=int, default=300)
@@ -140,7 +140,7 @@ def default_parser():
     parser.add_argument('--tcn_conv_drop', type=float, default=0.35)
     parser.add_argument('--tcn_fc_drop', type=float, default=0.3)
     parser.add_argument('--tcn_hid_dim', type=int, default=128)
-    parser.add_argument('--tcn_out_dim', type=int, default=768)
+    parser.add_argument('--tcn_out_dim', type=int, default=256)
     parser.add_argument('--tcn_kernel_size', type=int, default=7)
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     parser.add_argument('--window_size', type=int, default=16)
