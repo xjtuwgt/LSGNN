@@ -81,8 +81,6 @@ class LSTMGDTEncoder(nn.Module):
             self.word_embed_file_name = self.config.fasttext_model
         else:
             raise '{} is not supported'.format(self.word_embed_file_name)
-        self.lstm_encoder = LSTMWrapper(input_dim=self.config.word_emb_dim, n_layer=self.config.lstm_layers,
-                                        hidden_dim=self.config.word_emb_dim, bidir=True)
         self.node_embedder = SeqGNNNodeEmbedding(pre_trained_name=join(self.config.db_path, 'models', self.word_embed_file_name),
                                              oov_default=self.config.oov_type,
                                              hidden_dim=self.config.word_emb_dim,
@@ -90,7 +88,8 @@ class LSTMGDTEncoder(nn.Module):
                                              pos_initial_type=self.config.position_initial_type,
                                              add_position=self.config.add_position,
                                              word_emb_freeze=self.config.word_emb_freeze)
-
+        self.lstm_encoder = LSTMWrapper(input_dim=self.config.word_emb_dim, n_layer=self.config.lstm_layers,
+                                        hidden_dim=self.config.word_emb_dim, bidir=True)
         self.edge_embedder = RelationEmbedding(num_relations=self.config.num_relations,
                                                dim=self.config.relation_emb_dim,
                                                gamma=self.config.relation_emb_gamma)
@@ -150,9 +149,6 @@ class TCNGDTEncoder(nn.Module):
             self.word_embed_file_name = self.config.fasttext_model
         else:
             raise '{} is not supported'.format(self.word_embed_file_name)
-        self.tcn_encoder = TCNWrapper(c_in=self.config.word_emb_dim, layers=[self.config.tcn_hid_dim] * self.config.tcn_layers,
-                                        c_out=self.config.tcn_out_dim, conv_dropout=self.config.tcn_conv_drop,
-                                      fc_dropout=self.config.tcn_fc_drop, ks=self.config.tcn_kernel_size)
         self.node_embedder = SeqGNNNodeEmbedding(pre_trained_name=join(self.config.db_path, 'models', self.word_embed_file_name),
                                              oov_default=self.config.oov_type,
                                              hidden_dim=self.config.word_emb_dim,
@@ -160,7 +156,9 @@ class TCNGDTEncoder(nn.Module):
                                              pos_initial_type=self.config.position_initial_type,
                                              add_position=self.config.add_position,
                                              word_emb_freeze=self.config.word_emb_freeze)
-
+        self.tcn_encoder = TCNWrapper(c_in=self.config.word_emb_dim, layers=[self.config.tcn_hid_dim] * self.config.tcn_layers,
+                                        c_out=self.config.tcn_out_dim, conv_dropout=self.config.tcn_conv_drop,
+                                      fc_dropout=self.config.tcn_fc_drop, ks=self.config.tcn_kernel_size)
         self.edge_embedder = RelationEmbedding(num_relations=self.config.num_relations,
                                                dim=self.config.relation_emb_dim,
                                                gamma=self.config.relation_emb_gamma)
@@ -219,10 +217,9 @@ class SeqTCNGDTEncoder(nn.Module):
         self.node_embedder = SeqGNNEmbeddings(vocab_size=self.config.seq_gnn_vocab_size,
                                               pad_token_id=self.config.seq_gnn_pad_id,
                                               hidden_size=self.config.seq_gnn_word_hidden_dim)
-        self.tcn_encoder = TCNWrapper(c_in=self.config.seq_gnn_word_hidden_dim, layers=[self.config.tcn_hid_dim] * self.config.tcn_layers,
+        self.tcn_encoder = TCNWrapper(c_in=self.config.seq_gnn_word_emb_dim, layers=[self.config.tcn_hid_dim] * self.config.tcn_layers,
                                         c_out=self.config.tcn_out_dim, conv_dropout=self.config.tcn_conv_drop,
                                       fc_dropout=self.config.tcn_fc_drop, ks=self.config.tcn_kernel_size)
-
         self.edge_embedder = RelationEmbedding(num_relations=self.config.num_relations,
                                                dim=self.config.relation_emb_dim,
                                                gamma=self.config.relation_emb_gamma)

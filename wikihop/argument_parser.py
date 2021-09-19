@@ -114,13 +114,13 @@ def default_parser():
     parser.add_argument('--decode_dev_name', type=str, default='dev.features.pkl.gz')
     parser.add_argument('--fasttext_model', type=str, default='wiki-news-300d-1M.vec')
     parser.add_argument('--glove_model', type=str, default='glove.840B.300d')
-    parser.add_argument('--word_embed_type', type=str, default='glove')
+    parser.add_argument('--word_embed_type', type=str, default='glove', choices=['glove', 'fasttext', 'seq_gnn'])
     parser.add_argument('--customer', type=boolean_string, default='true')
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     parser.add_argument('--seq_gnn_vocab_size', type=int, default=None)
     parser.add_argument('--seq_gnn_tokenizer_name', type=str, default='allenai/longformer-base-4096')
     parser.add_argument('--seq_gnn_pad_id', type=int, default=None)
-    parser.add_argument('--seq_gnn_word_hidden_dim', type=int, default=384)
+    parser.add_argument('--seq_gnn_word_emb_dim', type=int, default=384)
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     parser.add_argument('--encoder_type', type=str, default='seq_tcn', choices=['seq_tcn', 'tcn', 'lstm', 'gdt'])
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
