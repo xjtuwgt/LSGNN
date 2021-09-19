@@ -54,9 +54,9 @@ def complete_default_parser(args):
     if args.debug:
         args.eval_interval_ratio = 0.5
     if args.relative_position:
-        args.num_relations = 2 * args.window_size + 2
+        args.num_relations = 2 * args.window_size + 1
         args.add_position = False
-    if args.encoder_type == 'seq_tcn':
+    if args.encoder_type in {'seq_tcn'}:
         args.word_embed_type = 'seq_gnn'
         seq_gnn_tokenizer = load_wikihop_tokenizer(pretrained_file_name=args.seq_gnn_tokenizer_name)
         args.seq_gnn_vocab_size = len(seq_gnn_tokenizer)
