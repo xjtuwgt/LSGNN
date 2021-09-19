@@ -54,7 +54,7 @@ def complete_default_parser(args):
     if args.debug:
         args.eval_interval_ratio = 0.5
     if args.relative_position:
-        args.num_relations = 2 * args.window_size + 1
+        args.num_relations = 2 * args.window_size + 2
         args.add_position = False
     if args.encoder_type == 'seq_tcn':
         args.word_embed_type = 'seq_gnn'

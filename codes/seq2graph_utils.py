@@ -44,7 +44,7 @@ def sliding_window_fast(seq_len: int, start_offset=0, window_size=24):
     assert len(sliding_src) == len(sliding_dst)
     return sliding_src, sliding_dst
 
-def sliding_window_with_position_fast(seq_len: int, start_offset=0, window_size=24):
+def sliding_window_with_position_fast(seq_len: int, start_offset=0, window_size=24, stride=2):
     """
     adding relative position
     :param seq_len:
@@ -103,7 +103,7 @@ def global_atten_edges(global_idx: list, seq_len: int):
     assert len(global_src_array) == len(seq_dst_array)
     return global_src_array, seq_dst_array
 
-def graph_triple_construction(seq_len: int, start_offset: int, window_size, global_idx: list, position):
+def graph_triple_construction(seq_len: int, start_offset: int, window_size, global_idx: list, position: bool):
     if position:
         sliding_src, sliding_dst, sliding_position = sliding_window_with_position_fast(seq_len=seq_len, start_offset=start_offset,
                                                        window_size=window_size)
@@ -118,8 +118,8 @@ def graph_triple_construction(seq_len: int, start_offset: int, window_size, glob
     src_list = [sliding_src, global_src, global_dst]
     dst_list = [sliding_dst, global_dst, global_src]
     if position:
-        rel_list = [sliding_position, np.full(2 * global_len, 2 * window_size, dtype=int)]
-        relation_num = 2 * window_size + 1
+        rel_list = [sliding_position, np.full(global_len, 2 * window_size, dtype=int), np.full(global_len, 2 * window_size + 1, dtype=int)]
+        relation_num = 2 * window_size + 2
     else:
         rel_list = [sliding_position, np.full(2 * global_len, 2, dtype=int)]
         relation_num = 3

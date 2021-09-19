@@ -19,6 +19,12 @@ download() {
     unzip $DATA_ROOT/models/glove.840B.300d.zip -d $DATA_ROOT/models/
 }
 
+wiki_download(){
+  [[ -d $DATA_ROOT ]] || mkdir -p $DATA_ROOT/knowledge
+  wget -P $DATA_ROOT/knowledge/ https://nlp.stanford.edu/projects/hotpotqa/enwiki-20171001-pages-meta-current-withlinks-abstracts.tar.bz2
+  tar -xjvf $DATA_ROOT/knowledge/enwiki-20171001-pages-meta-current-withlinks-abstracts.tar.bz2 -C $DATA_ROOT/knowledge
+}
+
 model_download() {
     [[ -d $DATA_ROOT ]] || mkdir -p $DATA_ROOT/models
     wget -P $DATA_ROOT/models/ https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x4096_512_2048cnn_2xhighway_5.5B/elmo_2x4096_512_2048cnn_2xhighway_5.5B_weights.hdf5
