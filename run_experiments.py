@@ -12,6 +12,7 @@ from os.path import join
 from time import time
 from core.gpu_utils import get_single_free_gpu
 from wikihop.wikihop_model import SeqGNNWikiHopModel
+from wikihop.modelutils import model_parameter_summary
 from wikihop.lossutils import ce_loss_computation as loss_function
 # from wikihop.lossutils import bce_loss_computation as loss_function
 from wikihop.modelutils import wikihop_model_evaluation
@@ -51,6 +52,9 @@ model.to(args.device)
 logging.info('Model Parameter Configuration:')
 for name, param in model.named_parameters():
     logging.info('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
+logging.info('*' * 75)
+model_para_number = model_parameter_summary(m=model, only_trainable=True)
+logging.info('Number of parameters of model = {}'.format(model_para_number))
 logging.info('*' * 75)
 ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # #########################################################################

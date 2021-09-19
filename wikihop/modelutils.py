@@ -35,7 +35,6 @@ def wikihop_model_evaluation(args, model, dataloader):
         metrics[metric] = sum([log[metric] for log in logs]) / len(logs)
     return metrics, pred_dict
 
-
 def model_parameter_summary(m: torch.nn.Module, only_trainable: bool = False):
     """
     returns the total number of parameters used by `m` (only counting
@@ -47,5 +46,4 @@ def model_parameter_summary(m: torch.nn.Module, only_trainable: bool = False):
         parameters = [p for p in parameters if p.requires_grad]
     unique = {p.data_ptr(): p for p in parameters}.values()
     model_para_number = sum(p.numel() for p in unique)
-    print('Number of parameters of model = {}'.format(model_para_number))
     return model_para_number
