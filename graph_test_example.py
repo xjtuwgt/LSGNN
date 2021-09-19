@@ -182,6 +182,7 @@ from core.tcn_gnn_encoder import TCNGDTEncoder
 from wikihop.lossutils import ce_loss_computation as loss_function
 # from wikihop.lossutils import bce_loss_computation as loss_function
 from wikihop.modelutils import wikihop_model_evaluation
+from wikihop.modelutils import model_parameter_summary
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
                     datefmt='%m/%d/%Y %H:%M:%S',
@@ -211,5 +212,8 @@ from core.seq_gnn_encoder import SeqTCNGDTEncoder
 
 model = SeqTCNGDTEncoder(config=args)
 
-for name, param in model.named_parameters():
-    logging.info('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
+# for name, param in model.named_parameters():
+#     logging.info('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
+
+model_parameter_summary(model, only_trainable=True)
+
