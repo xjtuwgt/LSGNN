@@ -24,9 +24,7 @@ def sliding_window_fast(seq_len: int, start_offset=0, window_size=24):
     row_n, col_n = sliding_dst_array.shape
     slide_last_idx = sliding_dst_array[row_n-1][0] + 1
     assert col_n == window_size
-    src_array = sliding_dst_array[:,0].reshape(row_n, 1)
-    sliding_src_array = np.repeat(src_array, col_n - 1, axis=1)
-    sliding_src_array = sliding_src_array.flatten()
+    sliding_src_array = np.tile(sliding_dst_array[:, 0].reshape(row_n, 1), (1, col_n - 1)).flatten()
     sliding_dst_array = sliding_dst_array[:,1:].flatten()
     #####################################################################################
     diag_src_array = diag_dst_array = seq_np
@@ -59,8 +57,7 @@ def sliding_window_with_position_fast(seq_len: int, start_offset=0, window_size=
     row_n, col_n = sliding_dst_array.shape
     slide_last_idx = sliding_dst_array[row_n - 1][0] + 1
     assert col_n == window_size
-    sliding_src_array = np.tile(sliding_dst_array[:, 0].reshape(row_n, 1), (1, col_n - 1))
-    sliding_src_array = sliding_src_array.flatten()
+    sliding_src_array = np.tile(sliding_dst_array[:, 0].reshape(row_n, 1), (1, col_n - 1)).flatten()
     sliding_dst_array = sliding_dst_array[:,1:].flatten()
     #####################################################################################
     forward_pos_array = np.tile(np.arange(1, window_size), row_n)
