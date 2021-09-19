@@ -44,7 +44,7 @@ def sliding_window_fast(seq_len: int, start_offset=0, window_size=24):
     assert len(sliding_src) == len(sliding_dst)
     return sliding_src, sliding_dst
 
-def sliding_window_with_position_fast(seq_len: int, start_offset=0, window_size=24, stride=2):
+def sliding_window_with_position_fast(seq_len: int, start_offset=0, window_size=24):
     """
     adding relative position
     :param seq_len:
