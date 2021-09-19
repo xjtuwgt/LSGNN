@@ -40,7 +40,7 @@ class DataHelper(object):
         else:
             train_examples = load_gz_file(file_name=self.train_example_name)
         train_data = WikihopTrainDataSet(examples=train_examples,
-                                         relative_position=self.config.relative_position,
+                                         relative_position=self.config.graph_relative_position,
                                          pad_id=self.pad_id,
                                          window_size=self.config.window_size,
                                          max_seq_length=self.config.max_seq_len,
@@ -60,7 +60,7 @@ class DataHelper(object):
         dev_examples = load_gz_file(file_name=self.dev_example_name)
         dev_data = WikihopDevDataSet(examples=dev_examples,
                                      pad_id=self.pad_id,
-                                     relative_position=self.config.relative_position,
+                                     relative_position=self.config.graph_relative_position,
                                      window_size=self.config.window_size,
                                      max_seq_length=self.config.max_seq_len,
                                      debug=self.config.debug)
