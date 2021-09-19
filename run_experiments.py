@@ -11,10 +11,7 @@ from core.embedding_utils import WordEmbedding
 from os.path import join
 from time import time
 from core.gpu_utils import get_single_free_gpu
-from core.gnn_encoder import GDTEncoder
-from core.lstm_gnn_encoder import LSTMGDTEncoder
-from core.tcn_gnn_encoder import TCNGDTEncoder
-from core.seq_gnn_encoder import SeqTCNGDTEncoder
+from wikihop.wikihop_model import SeqGNNWikiHopModel
 from wikihop.lossutils import ce_loss_computation as loss_function
 # from wikihop.lossutils import bce_loss_computation as loss_function
 from wikihop.modelutils import wikihop_model_evaluation
@@ -46,12 +43,7 @@ data_helper = DataHelper(config=args)
 dev_data_loader = data_helper.wikihop_val_dataloader
 train_data_loader = data_helper.wikihop_train_dataloader
 
-# model = GDTEncoder(config=args)
-# model = LSTMGDTEncoder(config=args)
-if args.word_embed_type == 'seq_gnn':
-    model = SeqTCNGDTEncoder(config=args)
-else:
-    model = TCNGDTEncoder(config=args)
+model = SeqGNNWikiHopModel(config=args)
 model.to(args.device)
 # #########################################################################
 # # Show model information

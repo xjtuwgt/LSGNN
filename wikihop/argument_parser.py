@@ -56,7 +56,8 @@ def complete_default_parser(args):
     if args.relative_position:
         args.num_relations = 2 * args.window_size + 1
         args.add_position = False
-    if args.word_embed_type == 'seq_gnn':
+    if args.encoder_type == 'seq_tcn':
+        args.word_embed_type = 'seq_gnn'
         seq_gnn_tokenizer = load_wikihop_tokenizer(pretrained_file_name=args.seq_gnn_tokenizer_name)
         args.seq_gnn_vocab_size = len(seq_gnn_tokenizer)
         args.seq_gnn_pad_id = seq_gnn_tokenizer.pad_token_id
@@ -120,6 +121,8 @@ def default_parser():
     parser.add_argument('--seq_gnn_tokenizer_name', type=str, default='allenai/longformer-base-4096')
     parser.add_argument('--seq_gnn_pad_id', type=int, default=None)
     parser.add_argument('--seq_gnn_word_hidden_dim', type=int, default=384)
+    # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    parser.add_argument('--encoder_type', type=str, default='seq_tcn', choices=['seq_tcn', 'tcn', 'lstm', 'gdt'])
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     parser.add_argument('--relation_emb_gamma', type=float, default=0.1)
     parser.add_argument('--relation_emb_dim', type=int, default=300)
