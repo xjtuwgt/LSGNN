@@ -137,10 +137,10 @@ class WikihopTrainDataSet(Dataset):
         query_end_pos = torch.LongTensor([query_span[1]])
         ## ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         global_ids = [_ for _ in range(query_cand_len)]
-        # graph = seq2graph(sequence=seq_input_ids, start_offset=query_cand_len, global_idx=global_ids,
-        #                   window_size=self.window_size, position=self.relative_position)
-        graph = seq2graph(sequence=seq_input_ids, start_offset=0, global_idx=global_ids,
+        graph = seq2graph(sequence=seq_input_ids, start_offset=query_cand_len, global_idx=global_ids,
                           window_size=self.window_size, position=self.relative_position)
+        # graph = seq2graph(sequence=seq_input_ids, start_offset=0, global_idx=global_ids,
+        #                   window_size=self.window_size, position=self.relative_position)
         ## ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         cand_start_pos = torch.LongTensor(ans_start_pos)
         cand_end_pos = torch.LongTensor(ans_end_pos)
@@ -196,10 +196,10 @@ class WikihopDevDataSet(Dataset):
         query_end_pos = torch.LongTensor([query_span[1]])
         ## ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         global_ids = [_ for _ in range(query_cand_len)]
-        # graph = seq2graph(sequence=seq_input_ids, start_offset=query_cand_len, global_idx=global_ids,
-        #                           window_size=self.window_size, position=self.relative_position)
-        graph = seq2graph(sequence=seq_input_ids, start_offset=0, global_idx=global_ids,
+        graph = seq2graph(sequence=seq_input_ids, start_offset=query_cand_len, global_idx=global_ids,
                                   window_size=self.window_size, position=self.relative_position)
+        # graph = seq2graph(sequence=seq_input_ids, start_offset=0, global_idx=global_ids,
+        #                           window_size=self.window_size, position=self.relative_position)
         ## ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         cand_start_pos = torch.LongTensor(ans_start_pos)
         cand_end_pos = torch.LongTensor(ans_end_pos)
