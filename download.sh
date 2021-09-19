@@ -4,6 +4,7 @@
 # DATA ROOT folder where you put data files
 DATA_ROOT=./data/
 
+
 PROCS=${1:-"download"} # define the processes you want to run, e.g. "download,preprocess,train" or "preprocess" only
 
 
