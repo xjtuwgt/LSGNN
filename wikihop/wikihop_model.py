@@ -4,6 +4,42 @@ from core.layernorm_utils import ScaleNorm as layer_norm
 from transformers import AdamW, get_linear_schedule_with_warmup, get_cosine_schedule_with_warmup, \
     get_cosine_with_hard_restarts_schedule_with_warmup
 from core.optimizer_utils import RAdam
+import pytorch_lightning as pl
+from wikihop.lossutils import ce_loss_computation as loss_function
+
+class LightingSeqGNNWikiHopModel(pl.LightningModule):
+    def __init__(self, config):
+        super(LightingSeqGNNWikiHopModel).__init__()
+        self.config = config
+        if self.config.encoder_type == 'seq_tcn':
+            self.encoder = SeqTCNGDTEncoder(config=config)
+        elif self.config.encoder_type == 'tcn':
+            self.encoder = TCNGDTEncoder(config=config)
+        elif self.config.encoder_type == 'lstm':
+            self.encoder = LSTMGDTEncoder(config=config)
+        elif self.config.encoder_type == 'gdt':
+            self.encoder = GDTEncoder(config=config)
+        else:
+            raise '{} is not supported'.format(self.config.encoder_type)
+        self.final_layer_norm = layer_norm(self.config.hidden_dim)
+        self.answer_prediction_layer = nn.Linear(in_features = self.config.hidden_dim, out_features=1)
+
+    def forward(self, batch: dict):
+        node_embed = self.encoder.forward(batch=batch)
+        node_embed = self.final_layer_norm(node_embed)
+        cand_ans_start_emb = node_embed[batch['cand_start']]
+        cand_ans_end_emb = node_embed[batch['cand_end']]
+        cand_ans_emb = (cand_ans_start_emb + cand_ans_end_emb) * 0.5
+        cand_ans_scores = self.answer_prediction_layer(cand_ans_emb)
+        return cand_ans_scores
+
+    def training_step(self, batch, batch_idx):
+        scores = self.forward(batch=batch)
+        loss_log = loss_function(scores=scores, batch=batch)
+        self.log("train_loss", loss_log['loss'])
+        return loss_log['loss']
+
+
 
 class SeqGNNWikiHopModel(nn.Module):
     def __init__(self, config):
