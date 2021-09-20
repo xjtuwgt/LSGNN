@@ -94,12 +94,8 @@ class WikihopTrainDataSet(Dataset):
                  max_ans_num: int = 80,
                  max_seq_length: int = 4096,
                  sent_drop_prob = 0.1,
-                 beta_drop_scale = 1.0,
-                 debug=False):
-        if debug:
-            self.examples = examples[:200]  # for debug
-        else:
-            self.examples = examples
+                 beta_drop_scale = 1.0):
+        self.examples = examples
         self.sent_drop_prob = sent_drop_prob
         self.beta_drop_scale = beta_drop_scale
         self.window_size = window_size
@@ -162,12 +158,8 @@ class WikihopDevDataSet(Dataset):
                  relative_position: bool,
                  pad_id: int=None,
                  max_ans_num: int = 80,
-                 max_seq_length: int = 4096,
-                 debug=False):
-        if debug:
-            self.examples = examples[:200]  # for debug
-        else:
-            self.examples = examples
+                 max_seq_length: int = 4096):
+        self.examples = examples
         self.window_size = window_size
         self.max_ans_num = max_ans_num
         self.max_seq_length = max_seq_length

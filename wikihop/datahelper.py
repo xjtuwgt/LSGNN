@@ -39,6 +39,7 @@ class DataHelper(object):
     def wikihop_train_dataloader(self) -> DataLoader:
         if self.config.debug:
             train_examples = load_gz_file(file_name=self.dev_example_name)
+            train_examples = train_examples[:200]
         else:
             train_examples = load_gz_file(file_name=self.train_example_name)
         train_data = WikihopTrainDataSet(examples=train_examples,
@@ -46,8 +47,7 @@ class DataHelper(object):
                                          pad_id=self.pad_id,
                                          window_size=self.config.window_size,
                                          max_seq_length=self.config.max_seq_len,
-                                         sent_drop_prob=self.config.sent_drop_prob,
-                                         debug=self.config.debug)
+                                         sent_drop_prob=self.config.sent_drop_prob)
         # ####++++++++++++
         dataloader = DataLoader(dataset=train_data,
                                 batch_size=self.config.train_batch_size,
@@ -61,12 +61,13 @@ class DataHelper(object):
     @property
     def wikihop_val_dataloader(self) -> DataLoader:
         dev_examples = load_gz_file(file_name=self.dev_example_name)
+        if self.config.debug:
+            dev_examples = dev_examples[:200]
         dev_data = WikihopDevDataSet(examples=dev_examples,
                                      pad_id=self.pad_id,
                                      relative_position=self.config.graph_relative_position,
                                      window_size=self.config.window_size,
-                                     max_seq_length=self.config.max_seq_len,
-                                     debug=self.config.debug)
+                                     max_seq_length=self.config.max_seq_len)
         dataloader = DataLoader(
             dataset=dev_data,
             batch_size=self.config.eval_batch_size,
@@ -111,6 +112,7 @@ class WikiHopDataModule(pl.LightningDataModule):
         if stage == "fit" or stage is None:
             if self.config.debug:
                 train_examples = load_gz_file(file_name=self.dev_example_name)
+                train_examples = train_examples[:200]
             else:
                 train_examples = load_gz_file(file_name=self.train_example_name)
             self.wikihop_train_data = WikihopTrainDataSet(examples=train_examples,
@@ -118,15 +120,17 @@ class WikiHopDataModule(pl.LightningDataModule):
                                              pad_id=self.pad_id,
                                              window_size=self.config.window_size,
                                              max_seq_length=self.config.max_seq_len,
-                                             sent_drop_prob=self.config.sent_drop_prob,
-                                             debug=self.config.debug)
-            dev_examples = load_gz_file(file_name=self.dev_example_name)
+                                             sent_drop_prob=self.config.sent_drop_prob)
+            if self.config.debug:
+                dev_examples = load_gz_file(file_name=self.dev_example_name)
+                dev_examples = dev_examples[:200]
+            else:
+                dev_examples = load_gz_file(file_name=self.dev_example_name)
             self.wikihop_dev_data = WikihopDevDataSet(examples=dev_examples,
                                          pad_id=self.pad_id,
                                          relative_position=self.config.graph_relative_position,
                                          window_size=self.config.window_size,
-                                         max_seq_length=self.config.max_seq_len,
-                                         debug=self.config.debug)
+                                         max_seq_length=self.config.max_seq_len)
 
     def train_dataloader(self):
         return DataLoader(dataset=self.wikihop_train_data,
@@ -144,5 +148,4 @@ class WikiHopDataModule(pl.LightningDataModule):
             shuffle=False,
             # collate_fn=graph_collate_fn,
             collate_fn=graph_seq_collate_fn,
-            num_workers=self.config.cpu_num // 2
-        )
+            num_workers=self.config.cpu_num // 2)
