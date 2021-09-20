@@ -134,7 +134,7 @@ for epoch in train_iterator:
         if (step + 1) % args.gradient_accumulation_steps == 0:
             optimizer.step()
             scheduler.step()  # Update learning rate schedule
-            model.zero_grad()
+            model.zero_grad(set_to_none=True)
             global_step += 1
             if args.local_rank in [-1, 0] and args.logging_steps > 0 and global_step % args.logging_steps == 0:
                 metrics = {}

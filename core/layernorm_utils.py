@@ -11,7 +11,7 @@ class ScaleNorm(nn.Module):
         scale = sqrt(dim)
         """
         scale = math.sqrt(input_dim * 1.0)
-        self.scale = Parameter(torch.tensor(scale), requires_grad=True)
+        self.scale = Parameter(torch.as_tensor(scale), requires_grad=True)
         self.eps = eps
 
     def forward(self, x):
@@ -26,7 +26,7 @@ class FixNorm(nn.Module):
         scale = sqrt(dim)
         """
         scale = math.sqrt(input_dim * 1.0)
-        self.scale = Parameter(torch.tensor(scale), requires_grad=True)
+        self.scale = Parameter(torch.as_tensor(scale), requires_grad=True)
         self.weight = Parameter(torch.randn(input_dim), requires_grad=True)
         self.eps = eps
 
