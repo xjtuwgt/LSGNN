@@ -81,7 +81,7 @@ class DataHelper(object):
 ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 class WikiHopDataModule(pl.LightningDataModule):
     def __init__(self, config):
-        super(WikiHopDataModule).__init__()
+        super().__init__()
         self.config = config
         if self.config.customer:
             self.train_example_name = join(PREPROCESS_FOLDER, self.config.word_embed_type + '.wikihop.' + self.config.decode_train_name)
