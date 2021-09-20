@@ -33,13 +33,8 @@ if args_config_provided.config_file is not None:
 else:
     argv = sys.argv[1:]
 args = parser.parse_args(argv)
-# ##########################################################################
+# ########################################################################
 args = complete_default_parser(args=args)
-for key, value in vars(args).items():
-    logging.info('{}\t{}'.format(key, value))
-logger.info("IN CMD MODE")
-logger.info("PyTorch version = {}".format(torch.__version__))
-# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 data_helper = DataHelper(config=args)
 dev_data_loader = data_helper.wikihop_val_dataloader
 train_data_loader = data_helper.wikihop_train_dataloader
@@ -50,7 +45,12 @@ if args.total_steps > 0:
 else:
     t_total_steps = len(train_data_loader) // args.gradient_accumulation_steps * args.num_train_epochs
 args.total_steps = t_total_steps
-# ##########################################################################
+# #########################################################################
+for key, value in vars(args).items():
+    logging.info('{}\t{}'.format(key, value))
+logger.info("IN CMD MODE")
+logger.info("PyTorch version = {}".format(torch.__version__))
+# #########################################################################
 model = SeqGNNWikiHopModel(config=args)
 model.to(args.device)
 # #########################################################################
