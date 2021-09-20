@@ -43,7 +43,14 @@ logger.info("PyTorch version = {}".format(torch.__version__))
 data_helper = DataHelper(config=args)
 dev_data_loader = data_helper.wikihop_val_dataloader
 train_data_loader = data_helper.wikihop_train_dataloader
-
+# #########################################################################
+if args.total_steps > 0:
+    t_total_steps = args.total_steps
+    args.num_train_epochs = args.max_steps // (len(train_data_loader) // args.gradient_accumulation_steps) + 1
+else:
+    t_total_steps = len(train_data_loader) // args.gradient_accumulation_steps * args.num_train_epochs
+args.total_steps = t_total_steps
+# ##########################################################################
 model = SeqGNNWikiHopModel(config=args)
 model.to(args.device)
 # #########################################################################
@@ -59,14 +66,7 @@ logging.info('*' * 75)
 ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # #########################################################################
 # # Get Optimizer
-# #########################################################################
-if args.max_steps > 0:
-    t_total_steps = args.max_steps
-    args.num_train_epochs = args.max_steps // (len(train_data_loader) // args.gradient_accumulation_steps) + 1
-else:
-    t_total_steps = len(train_data_loader) // args.gradient_accumulation_steps * args.num_train_epochs
-# ##########################################################################
-optimizer, scheduler = model.fixed_learning_rate_optimizers(total_steps=t_total_steps)
+optimizer, scheduler = model.fixed_learning_rate_optimizers()
 # ##########################################################################
 if args.fp16:
     try:

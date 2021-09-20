@@ -4,12 +4,12 @@ from core.layernorm_utils import ScaleNorm as layer_norm
 from transformers import AdamW, get_linear_schedule_with_warmup, get_cosine_schedule_with_warmup, \
     get_cosine_with_hard_restarts_schedule_with_warmup
 from core.optimizer_utils import RAdam
-import pytorch_lightning as pl
+from pytorch_lightning.core.lightning import LightningModule
 from wikihop.lossutils import ce_loss_computation as loss_function
 
-class LightingSeqGNNWikiHopModel(pl.LightningModule):
+class LightingSeqGNNWikiHopModel(LightningModule):
     def __init__(self, config):
-        super(LightingSeqGNNWikiHopModel).__init__()
+        super().__init__()
         self.config = config
         if self.config.encoder_type == 'seq_tcn':
             self.encoder = SeqTCNGDTEncoder(config=config)
@@ -66,15 +66,15 @@ class LightingSeqGNNWikiHopModel(pl.LightningModule):
         if self.config.lr_scheduler == 'linear':
             scheduler = get_linear_schedule_with_warmup(optimizer,
                                                         num_warmup_steps=self.config.warmup_steps,
-                                                        num_training_steps=total_steps)
+                                                        num_training_steps=self.config.total_steps)
         elif self.config.lr_scheduler == 'cosine':
             scheduler = get_cosine_schedule_with_warmup(optimizer=optimizer,
                                                         num_warmup_steps=self.config.warmup_steps,
-                                                        num_training_steps=total_steps)
+                                                        num_training_steps=self.config.total_steps)
         elif self.config.lr_scheduler == 'cosine_restart':
             scheduler = get_cosine_with_hard_restarts_schedule_with_warmup(optimizer=optimizer,
                                                                            num_warmup_steps=self.config.warmup_steps,
-                                                                           num_training_steps=total_steps)
+                                                                           num_training_steps=self.config.total_steps)
         else:
             raise '{} is not supported'.format(self.config.lr_scheduler)
         return [optimizer], [scheduler]
@@ -107,7 +107,7 @@ class SeqGNNWikiHopModel(nn.Module):
         cand_ans_scores = self.answer_prediction_layer(cand_ans_emb)
         return cand_ans_scores
 
-    def fixed_learning_rate_optimizers(self, total_steps):
+    def fixed_learning_rate_optimizers(self):
         "Prepare optimizer and schedule (linear warmup and decay)"
         no_decay = ["bias", "LayerNorm.weight"]
         optimizer_grouped_parameters = [
@@ -129,15 +129,15 @@ class SeqGNNWikiHopModel(nn.Module):
         if self.config.lr_scheduler == 'linear':
             scheduler = get_linear_schedule_with_warmup(optimizer,
                                                         num_warmup_steps=self.config.warmup_steps,
-                                                        num_training_steps=total_steps)
+                                                        num_training_steps=self.config.total_steps)
         elif self.config.lr_scheduler == 'cosine':
             scheduler = get_cosine_schedule_with_warmup(optimizer=optimizer,
                                                         num_warmup_steps=self.config.warmup_steps,
-                                                        num_training_steps=total_steps)
+                                                        num_training_steps=self.config.total_steps)
         elif self.config.lr_scheduler == 'cosine_restart':
             scheduler = get_cosine_with_hard_restarts_schedule_with_warmup(optimizer=optimizer,
                                                                            num_warmup_steps=self.config.warmup_steps,
-                                                                           num_training_steps=total_steps)
+                                                                           num_training_steps=self.config.total_steps)
         else:
             raise '{} is not supported'.format(self.config.lr_scheduler)
         return optimizer, scheduler
