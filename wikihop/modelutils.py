@@ -32,7 +32,6 @@ def wikihop_model_prediction(args, model, dataloader):
     model.eval()
     logs = []
     pred_dict = {}
-
     for batch in tqdm(dataloader):
         # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         for key, value in batch.items():
@@ -48,13 +47,8 @@ def wikihop_model_prediction(args, model, dataloader):
             sigmoid_scores[cand_mask == 0] = -1
             labels = batch['label']
             label_idxes = batch['label_id'].squeeze(dim=-1).tolist()
-
             pred_labels = torch.argmax(sigmoid_scores, dim=-1).tolist()
             true_labels = torch.argmax(labels, dim=-1).tolist()
-
-            pred_labels = torch.argmax(sigmoid_scores, dim=-1)
-            correct = sum(pred_labels == labels).data.item()
-
             for idx in range(batch_size):
                 example_id = batch['id'][idx]
                 pred_dict[example_id] = pred_labels[idx]
