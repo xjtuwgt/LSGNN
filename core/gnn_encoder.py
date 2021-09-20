@@ -191,7 +191,8 @@ class TCNGDTEncoder(nn.Module):
         tcn_input = tcn_input.transpose(-2, -1)
         tcn_output = self.tcn_encoder(tcn_input)
         batch_size, batch_seq_len, out_dim = tcn_output.shape
-        tcn_output = tcn_output.contiguous().view(batch_size * batch_seq_len, out_dim)
+        # tcn_output = tcn_output.contiguous().view(batch_size * batch_seq_len, out_dim)
+        tcn_output = tcn_output.reshape(batch_size * batch_seq_len, out_dim)
         tcn_mask = batch['seq_mask'].view(batch_size * batch_seq_len)
         graph = batch['graph']
         with graph.local_scope():
