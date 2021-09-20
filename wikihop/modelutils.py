@@ -18,9 +18,8 @@ def wikihop_model_evaluation(args, model, dataloader):
             cand_mask = batch['cand_mask']
             sigmoid_scores = torch.sigmoid(scores)
             sigmoid_scores[cand_mask==0] = -1
-            labels = batch['label']
             pred_labels = torch.argmax(sigmoid_scores, dim=-1)
-            correct = sum(pred_labels == labels).data.item()
+            correct = sum(pred_labels == batch['label_id'].squeeze(dim=-1)).data.item()
             correct_count = correct_count + correct
             total_count = total_count + batch_size
             del batch
