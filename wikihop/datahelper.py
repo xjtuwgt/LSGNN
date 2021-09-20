@@ -39,7 +39,7 @@ class DataHelper(object):
     def wikihop_train_dataloader(self) -> DataLoader:
         if self.config.debug:
             train_examples = load_gz_file(file_name=self.dev_example_name)
-            train_examples = train_examples[:200]
+            train_examples = train_examples[:100]
         else:
             train_examples = load_gz_file(file_name=self.train_example_name)
         train_data = WikihopTrainDataSet(examples=train_examples,
@@ -62,7 +62,7 @@ class DataHelper(object):
     def wikihop_val_dataloader(self) -> DataLoader:
         dev_examples = load_gz_file(file_name=self.dev_example_name)
         if self.config.debug:
-            dev_examples = dev_examples[:200]
+            dev_examples = dev_examples[:100]
         dev_data = WikihopDevDataSet(examples=dev_examples,
                                      pad_id=self.pad_id,
                                      relative_position=self.config.graph_relative_position,
@@ -112,7 +112,7 @@ class WikiHopDataModule(pl.LightningDataModule):
         if stage == "fit" or stage is None:
             if self.config.debug:
                 train_examples = load_gz_file(file_name=self.dev_example_name)
-                train_examples = train_examples[:200]
+                train_examples = train_examples[:100]
             else:
                 train_examples = load_gz_file(file_name=self.train_example_name)
             self.wikihop_train_data = WikihopTrainDataSet(examples=train_examples,
@@ -123,7 +123,7 @@ class WikiHopDataModule(pl.LightningDataModule):
                                              sent_drop_prob=self.config.sent_drop_prob)
             if self.config.debug:
                 dev_examples = load_gz_file(file_name=self.dev_example_name)
-                dev_examples = dev_examples[:200]
+                dev_examples = dev_examples[:100]
             else:
                 dev_examples = load_gz_file(file_name=self.dev_example_name)
             self.wikihop_dev_data = WikihopDevDataSet(examples=dev_examples,
