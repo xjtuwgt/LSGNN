@@ -78,9 +78,7 @@ class LightingSeqGNNWikiHopModel(LightningModule):
         else:
             raise '{} is not supported'.format(self.config.lr_scheduler)
         return [optimizer], [scheduler]
-
-
-
+# #########################################################################
 class SeqGNNWikiHopModel(nn.Module):
     def __init__(self, config):
         super(SeqGNNWikiHopModel, self).__init__()
