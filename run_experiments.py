@@ -161,11 +161,10 @@ for epoch in train_iterator:
         # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         if (step + 1) % eval_batch_interval_num == 0:
             if args.local_rank == -1 or torch.distributed.get_rank() == 0:
-                metrics, predictions = wikihop_model_evaluation(args=args, model=model, dataloader=dev_data_loader)
+                metrics = wikihop_model_evaluation(args=args, model=model, dataloader=dev_data_loader)
                 if metrics['accuracy'] > best_accuracy:
                     best_accuracy = metrics['accuracy']
                     best_metrics = metrics
-                    best_predictions = predictions
                     for key, value in metrics.items():
                         logging.info('Current Metric {}: {:.5f}'.format(key, value))
                         tb_writer.add_scalar(key, value, epoch)
@@ -174,11 +173,10 @@ for epoch in train_iterator:
                 tb_writer.add_scalar(key, value, epoch)
 
     if args.local_rank == -1 or torch.distributed.get_rank() == 0:
-        metrics, predictions = wikihop_model_evaluation(args=args, model=model, dataloader=dev_data_loader)
+        metrics = wikihop_model_evaluation(args=args, model=model, dataloader=dev_data_loader)
         if metrics['accuracy'] > best_accuracy:
             best_accuracy = metrics['accuracy']
             best_metrics = metrics
-            best_predictions = predictions
             for key, value in best_metrics.items():
                 logging.info('Best Metric {}: {:.5f}'.format(key, value))
                 tb_writer.add_scalar(key, value, epoch)
