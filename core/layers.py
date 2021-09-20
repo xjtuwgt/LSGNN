@@ -463,7 +463,7 @@ class TCNWrapper(nn.Module):
 
     def forward(self, x):
         x = self.encoder(x)
-        x = x.transpose(-2, -1)
+        x = x.transpose(-2, -1).contiguous()
         if self.dropout is not None: x = self.dropout(x)
         return self.linear(x)
 
