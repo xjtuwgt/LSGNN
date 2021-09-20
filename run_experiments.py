@@ -150,7 +150,7 @@ for epoch in train_iterator:
                 tb_writer.add_scalar('lr', scheduler.get_lr()[0], global_step)
                 tb_writer.add_scalar('loss', loss_log['loss'], global_step)
                 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        if args.max_steps > 0 and global_step > args.max_steps:
+        if args.total_steps > 0 and global_step > args.total_steps:
             epoch_iterator.close()
             break
         # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
