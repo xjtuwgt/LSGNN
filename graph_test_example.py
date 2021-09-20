@@ -208,3 +208,12 @@
 #
 #
 #
+
+import torch
+from time import time
+start_time = time()
+x = torch.rand((4, 4096, 200))
+for i in range(100):
+    y = x.transpose(-1, -2)
+print(time() - start_time)
+
