@@ -36,8 +36,7 @@ class PositionwiseFeedForward(nn.Module):
         nn.init.xavier_normal_(self.w_1.weight, gain=gain)
         gain = small_init_gain(d_in=self.hidden_dim, d_out=self.model_dim)
         nn.init.xavier_normal_(self.w_2.weight, gain=gain)
-
-
+##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++V
 class RGDTLayer(nn.Module):
     def __init__(self,
                  in_ent_feats: int,
@@ -190,6 +189,7 @@ class RGDTLayer(nn.Module):
             feat = (1.0 - self._alpha) * self.feat_drop(feat) + self._alpha * feat_0
         return feat
 
+##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 class GDTLayer(nn.Module):
     def __init__(self,
                  in_ent_feats: int,
@@ -333,7 +333,6 @@ class GDTLayer(nn.Module):
         return feat
 
 ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
 class LSTMWrapper(nn.Module):
     def __init__(self, input_dim: int, hidden_dim: int, n_layer:int, concat=False, bidir=True, dropout=0.3, return_last=True):
         """
@@ -434,6 +433,7 @@ class TemporalBlock(nn.Module):
         res = x if self.downsample is None else self.downsample(x)
         return self.relu(out + res)
 
+##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 class TemporalConvNet(nn.Module):
     def __init__(self, c_in: int, layers: list, ks=2, dropout=0.):
         super(TemporalConvNet, self).__init__()
