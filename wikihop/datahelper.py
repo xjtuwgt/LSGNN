@@ -52,6 +52,7 @@ class DataHelper(object):
                                 shuffle=True,
                                 # collate_fn=graph_collate_fn,
                                 collate_fn=graph_seq_collate_fn,
+                                pin_memory=True,
                                 num_workers=self.config.cpu_num //2)
         return dataloader
 
