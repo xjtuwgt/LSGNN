@@ -7,6 +7,7 @@ from pathlib import Path
 from os.path import join
 from typing import List, Optional
 from codes.text_utils import sanitize_text
+from tqdm import tqdm
 
 import requests
 import typer
@@ -71,6 +72,7 @@ def main(
         import spacy
         nlp = spacy.load("en_core_web_sm", disable=["ner"])
 
+    print('Starting download...')
     # Download WikiText-103
     r = requests.get(WIKITEXT_103_URL, stream=True)
     z = zipfile.ZipFile(io.BytesIO(r.content))
@@ -78,7 +80,7 @@ def main(
     typer.secho(f"{DOWNLOAD} Downloaded WikiText-103", bold=True)
 
     preprocessed_documents: List[str] = []
-    for filename in partition_filenames:
+    for filename in tqdm(partition_filenames):
         text = z.open(filename).read().decode("utf-8")
 
         # Strip out subtitles and split the text into documents
@@ -114,5 +116,4 @@ def main(
 if __name__ == '__main__':
     wikitext_103_out_file_path = Path(join(HOME_DATA_FOLDER, 'wikitext_103'))
     os.makedirs(wikitext_103_out_file_path, exist_ok=True)
-
     main(output_filepath=Path(wikitext_103_out_file_path))
