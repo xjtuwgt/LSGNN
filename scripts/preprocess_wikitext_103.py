@@ -109,11 +109,12 @@ def main(
                     break
                 preprocessed_documents.append(doc)
                 progress.update(1)
-
+    print('Preprocessed documents = {}'.format(len(preprocessed_documents)))
     _write_output_to_disk(preprocessed_documents, output_filepath)
 
 
 if __name__ == '__main__':
     wikitext_103_out_file_path = Path(join(HOME_DATA_FOLDER, 'wikitext_103'))
     os.makedirs(wikitext_103_out_file_path, exist_ok=True)
-    main(output_filepath=Path(wikitext_103_out_file_path))
+    wikitext_103_out_file_path = Path(join(HOME_DATA_FOLDER, 'wikitext_103/train.txt'))
+    main(output_filepath=wikitext_103_out_file_path)
