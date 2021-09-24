@@ -485,3 +485,33 @@ class TCN(nn.Module):
         x = self.gap(x)
         if self.dropout is not None: x = self.dropout(x)
         return self.linear(x)
+
+##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+class BertPredictionHeadTransform(nn.Module):
+    def __init__(self, hidden_size: int, layer_norm_eps: float=1e-6):
+        super().__init__()
+        self.dense = nn.Linear(hidden_size, hidden_size)
+        self.LayerNorm = nn.LayerNorm(hidden_size, eps=layer_norm_eps)
+
+    def forward(self, hidden_states):
+        hidden_states = self.dense(hidden_states)
+        hidden_states = self.LayerNorm(hidden_states)
+        return hidden_states
+
+
+class BertLMPredictionHead(nn.Module):
+    def __init__(self, hidden_size, vocab_size, layer_norm_eps=1e-6):
+        super().__init__()
+        self.transform = BertPredictionHeadTransform(hidden_size=hidden_size, layer_norm_eps=layer_norm_eps)
+        # The output weights are the same as the input embeddings, but there is
+        # an output-only bias for each token.
+        self.decoder = nn.Linear(hidden_size, vocab_size, bias=False)
+        self.bias = nn.Parameter(torch.zeros(vocab_size))
+
+        # Need a link between the two variables so that the bias is correctly resized with `resize_token_embeddings`
+        self.decoder.bias = self.bias
+
+    def forward(self, hidden_states):
+        hidden_states = self.transform(hidden_states)
+        hidden_states = self.decoder(hidden_states)
+        return hidden_states
