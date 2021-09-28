@@ -37,22 +37,13 @@ def sample_anchor_positive_pairs(text: str, num_anchors: int, num_positives: int
     num_tokens = len(tokens)
 
     if num_tokens < num_anchors * max_span_len * 2:
-        raise ValueError(
-            f"len({tok_method}) should be at least {num_anchors * max_span_len * 2}"
-            f" (num_anchors * max_span_len * 2), got {num_tokens}."
-        )
+        raise ValueError(f"len({tok_method}) should be at least {num_anchors * max_span_len * 2}"
+            f" (num_anchors * max_span_len * 2), got {num_tokens}.")
     if min_span_len > max_span_len:
-        raise ValueError(
-            f"min_span_len must be less than max_span_len ({max_span_len}), got {min_span_len}."
-        )
+        raise ValueError(f"min_span_len must be less than max_span_len ({max_span_len}), got {min_span_len}.")
     if max_span_len > num_tokens:
-        raise ValueError(
-            (
-                f"max_span_len must be less than or equal to"
-                f" len({tok_method}) ({num_tokens}), got {max_span_len}."
-            )
-        )
-
+        raise ValueError((f"max_span_len must be less than or equal to"
+                f" len({tok_method}) ({num_tokens}), got {max_span_len}."))
     # Valid anchor starts are token indices which begin a token span of at least max_span_len.
     anchors, positives = [], []
     valid_anchor_starts = list(range(0, num_tokens - max_span_len + 1, max_span_len))
@@ -70,8 +61,7 @@ def sample_anchor_positive_pairs(text: str, num_anchors: int, num_positives: int
         anchor_start = np.random.randint(
             valid_anchor_starts[anchor_start_idx],
             # randint is high-exclusive
-            valid_anchor_starts[anchor_start_idx] + max_span_len - anchor_len + 1,
-        )
+            valid_anchor_starts[anchor_start_idx] + max_span_len - anchor_len + 1,)
         # Once sampled, remove an anchor (and its immediate neighbours) from consideration.
         del valid_anchor_starts[max(0, anchor_start_idx - 1) : anchor_start_idx + 2]
         anchor_end = anchor_start + anchor_len
@@ -83,9 +73,7 @@ def sample_anchor_positive_pairs(text: str, num_anchors: int, num_positives: int
             # A user can specify a subsuming or adjacent only sampling strategy.
             if sampling_strategy == "subsuming":
                 # To be strictly subsuming, we cannot allow the positive_len > anchor_len.
-                positive_len = int(
-                    np.random.beta(2, 4) * (anchor_len - min_span_len) + min_span_len
-                )
+                positive_len = int(np.random.beta(2, 4) * (anchor_len - min_span_len) + min_span_len)
                 # randint is high-exclusive
                 positive_start = np.random.randint(anchor_start, anchor_end - positive_len + 1)
             elif sampling_strategy == "adjacent":
@@ -94,16 +82,11 @@ def sample_anchor_positive_pairs(text: str, num_anchors: int, num_positives: int
                 # either side, this won't be a problem and max_positive_len will equal max_span_len.
                 max_positive_len = min(max_span_len, max(anchor_start, num_tokens - anchor_end))
                 if max_positive_len < max_span_len:
-                    logger.warning_once(
-                        (
+                    logger.warning_once((
                             "There is no room to sample an adjacent positive span. Temporarily"
                             " reducing the maximum span length of positives. This message will not"
-                            " be displayed again."
-                        )
-                    )
-                positive_len = int(
-                    np.random.beta(2, 4) * (max_positive_len - min_span_len) + min_span_len
-                )
+                            " be displayed again."))
+                positive_len = int(np.random.beta(2, 4) * (max_positive_len - min_span_len) + min_span_len)
                 # There are two types of adjacent positives, those that border the beginning of the
                 # anchor and those that border the end. The checks above guarantee at least one of
                 # these is valid. Here we just choose from the valid positive starts at random.
@@ -116,9 +99,7 @@ def sample_anchor_positive_pairs(text: str, num_anchors: int, num_positives: int
             else:
                 # Sample positive length from a beta distribution skewed towards shorter spans. The
                 # idea is to promote diversity and minimize the amount of overlapping text.
-                positive_len = int(
-                    np.random.beta(2, 4) * (max_span_len - min_span_len) + min_span_len
-                )
+                positive_len = int(np.random.beta(2, 4) * (max_span_len - min_span_len) + min_span_len)
                 # By default, spans may be adjacent or overlap with each other and the anchor.
                 # Careful not to run off the edges of the document (this error may pass silently).
                 positive_start = np.random.randint(
@@ -139,18 +120,24 @@ if __name__ == '__main__':
     from codes.masked_lm_utils import mask_tokens
     from transformers import BertForMaskedLM
 
-    wiki_train_data_file_name = join(HOME_DATA_FOLDER, 'wikitext_103', 'train.txt')
-    print(wiki_train_data_file_name)
+    # np.random.beta()
 
-    tokenizer = load_wikihop_tokenizer('allenai/longformer-base-4096')
+    # wiki_train_data_file_name = join(HOME_DATA_FOLDER, 'wikitext_103', 'train.txt')
+    # print(wiki_train_data_file_name)
+    #
+    # tokenizer = load_wikihop_tokenizer('allenai/longformer-base-4096')
     x = 'See how women around the world are sharing their stories with Google Translate'
-    y = tokenizer.tokenize(x)
-    y = tokenizer.convert_tokens_to_ids(y)
-    y = torch.as_tensor(y, dtype=torch.long).reshape(1, (len(y))).repeat(4, 1)
-    print(y.shape)
-    a, b = mask_tokens(inputs=y, tokenizer=tokenizer)
-    print(a)
-    print(b)
+
+    y = sample_anchor_positive_pairs(text=x, num_anchors=1, num_positives=2, min_span_len=3, max_span_len=5)
+    print(y[0])
+    print(y[1])
+    # y = tokenizer.tokenize(x)
+    # y = tokenizer.convert_tokens_to_ids(y)
+    # y = torch.as_tensor(y, dtype=torch.long).reshape(1, (len(y))).repeat(4, 1)
+    # print(y.shape)
+    # a, b = mask_tokens(inputs=y, tokenizer=tokenizer)
+    # print(a)
+    # print(b)
     # count = 0
     # short_count = 0
     # with open(wiki_train_data_file_name) as fp:
