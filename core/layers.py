@@ -149,7 +149,7 @@ class RGDTLayer(nn.Module):
             graph.srcdata.update({'ft': feat_head, 'eh': eh})
             graph.dstdata.update({'et': et})
             graph.apply_edges(fn.u_add_v('eh', 'et', 'e'))
-            e = self.leaky_relu(graph.edata.pop('e') + er)
+            e = self.leaky_relu(graph.edata.pop('e') + er) ### if the graph is sparse, we use leaky_relu, if the graph is not sparse, we make use of original values
             if self.ppr_diff:
                 graph.edata['a'] = edge_softmax(graph, e)
                 rst = self.ppr_estimation(graph=graph)
