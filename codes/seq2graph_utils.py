@@ -18,7 +18,7 @@ def sliding_window_fast(seq_len: int, start_offset=0, window_size=24):
     sliding_seq_len = seq_len - start_offset
     if window_size >= sliding_seq_len:
         window_size = sliding_seq_len // 2 - 1
-        window_size = window_size if window_size >= 1 else 1
+        window_size = window_size if window_size >= 1 else 1 ## The smallest window size = 1
     seq_np = np.arange(sliding_seq_len) + start_offset
     sliding_dst_array = sliding_window_view(x=seq_np, window_shape=window_size)
     row_n, col_n = sliding_dst_array.shape
@@ -41,7 +41,7 @@ def sliding_window_fast(seq_len: int, start_offset=0, window_size=24):
 
 def sliding_window_with_position_fast(seq_len: int, start_offset=0, window_size=24):
     """
-    adding relative position
+    adding relative position, number of relations = 2 * window_size
     :param seq_len:
     :param start_offset:
     :param window_size:
@@ -141,9 +141,15 @@ def seq2graph(sequence: list, global_idx: list, position, start_offset: int = 0,
 
 if __name__ == '__main__':
     from time import time
-    x = list(range(6))
-    g = seq2graph(sequence=x, global_idx=list(range(2)), start_offset=2, window_size=3, position=True)
-    print()
+    seq_len = 100000
+    x = list(range(seq_len))
+    # g = seq2graph(sequence=x, global_idx=list(range(2)), start_offset=2, window_size=3, position=True)
+    # print()
+    start_time = time()
+    a, b  = global_atten_edges(global_idx=[1,2], seq_len=seq_len)
+    print(time() - start_time)
+    # print(a)
+    # print(b)
 #     # x = np.arange(10)
 #     # sliding_dst_array = sliding_window_view(x=x, window_shape=3)
 #     # print(sliding_dst_array)
@@ -166,11 +172,11 @@ if __name__ == '__main__':
 #         sliding_window_with_position_fast_1(seq_len=10000, window_size=24)
 #     print(time() - start_time)
 #     # print(x)
-    start_time = time()
-    for i in range(1):
-        # global_atten_edges_1(global_idx=list(range(200)), seq_len=10000)
-        sliding_window_with_position_fast(seq_len=3000, window_size=24)
-        # seq_idx_array = np.arange(10).reshape(1, 10).repeat(2, axis=0)
-        # seq_idx_array = seq_idx_array.flatten()
-    print(time() - start_time)
-    # print(seq_idx_array)
+#     start_time = time()
+#     for i in range(1):
+#         # global_atten_edges_1(global_idx=list(range(200)), seq_len=10000)
+#         sliding_window_with_position_fast(seq_len=3000, window_size=24)
+#         # seq_idx_array = np.arange(10).reshape(1, 10).repeat(2, axis=0)
+#         # seq_idx_array = seq_idx_array.flatten()
+#     print(time() - start_time)
+#     # print(seq_idx_array)
