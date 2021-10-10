@@ -159,6 +159,7 @@ def default_parser():
     parser.add_argument('--hidden_dim', type=int, default=256)
     parser.add_argument('--head_num', type=int, default=4)
     parser.add_argument('--layers', type=int, default=3)
+    parser.add_argument('--negative_slope', type=float, default=1.0)
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     parser.add_argument('--eval_batch_size', type=int, default=32)
     parser.add_argument('--per_gpu_train_batch_size', type=int, default=8)

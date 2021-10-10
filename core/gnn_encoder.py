@@ -39,6 +39,7 @@ class GDTEncoder(nn.Module):
                                                feat_drop=self.config.feat_drop,
                                                attn_drop=self.config.attn_drop,
                                                residual=self.config.residual,
+                                               negative_slope=self.config.negative_slope,
                                                diff_head_tail=self.config.diff_head_tail,
                                                ppr_diff=self.config.ppr_diff))
         for _ in range(1, self.config.layers):
@@ -50,6 +51,7 @@ class GDTEncoder(nn.Module):
                                                feat_drop=self.config.feat_drop,
                                                attn_drop=self.config.attn_drop,
                                                residual=self.config.residual,
+                                               negative_slope=self.config.negative_slope,
                                                diff_head_tail=self.config.diff_head_tail,
                                                ppr_diff=self.config.ppr_diff))
 
