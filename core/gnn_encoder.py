@@ -266,3 +266,24 @@ class SeqTCNGDTEncoder(nn.Module):
                 else:
                     node_embed = layer(graph, node_embed)
         return node_embed
+
+####################################################
+#Sequence encoder with GNN
+####################################################
+class SeqEncoder(nn.Module):
+    def __init__(self, config):
+        super(SeqEncoder, self).__init__()
+        self.config = config
+        if self.config.encoder_type == 'seq_tcn':
+            self.encoder = SeqTCNGDTEncoder(config=config)
+        elif self.config.encoder_type == 'tcn':
+            self.encoder = TCNGDTEncoder(config=config)
+        elif self.config.encoder_type == 'lstm':
+            self.encoder = LSTMGDTEncoder(config=config)
+        elif self.config.encoder_type == 'gdt':
+            self.encoder = GDTEncoder(config=config)
+        else:
+            raise '{} is not supported'.format(self.config.encoder_type)
+
+    def forward(self, batch: dict):
+        return self.encoder(batch)

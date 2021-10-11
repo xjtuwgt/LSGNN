@@ -1,4 +1,4 @@
-from core.gnn_encoder import SeqTCNGDTEncoder, TCNGDTEncoder, LSTMGDTEncoder, GDTEncoder
+from core.gnn_encoder import SeqEncoder
 from torch import nn
 from core.layernorm_utils import ScaleNorm as layer_norm
 from transformers import AdamW, get_linear_schedule_with_warmup, get_cosine_schedule_with_warmup, \
@@ -11,16 +11,7 @@ class LightingSeqGNNWikiHopModel(LightningModule):
     def __init__(self, config):
         super().__init__()
         self.config = config
-        if self.config.encoder_type == 'seq_tcn':
-            self.encoder = SeqTCNGDTEncoder(config=config)
-        elif self.config.encoder_type == 'tcn':
-            self.encoder = TCNGDTEncoder(config=config)
-        elif self.config.encoder_type == 'lstm':
-            self.encoder = LSTMGDTEncoder(config=config)
-        elif self.config.encoder_type == 'gdt':
-            self.encoder = GDTEncoder(config=config)
-        else:
-            raise '{} is not supported'.format(self.config.encoder_type)
+        self.encoder = SeqEncoder(config=config)
         self.final_layer_norm = layer_norm(self.config.hidden_dim)
         self.answer_prediction_layer = nn.Linear(in_features = self.config.hidden_dim, out_features=1)
 
@@ -83,16 +74,7 @@ class SeqGNNWikiHopModel(nn.Module):
     def __init__(self, config):
         super(SeqGNNWikiHopModel, self).__init__()
         self.config = config
-        if self.config.encoder_type == 'seq_tcn':
-            self.encoder = SeqTCNGDTEncoder(config=config)
-        elif self.config.encoder_type == 'tcn':
-            self.encoder = TCNGDTEncoder(config=config)
-        elif self.config.encoder_type == 'lstm':
-            self.encoder = LSTMGDTEncoder(config=config)
-        elif self.config.encoder_type == 'gdt':
-            self.encoder = GDTEncoder(config=config)
-        else:
-            raise '{} is not supported'.format(self.config.encoder_type)
+        self.encoder = SeqEncoder(config=config)
         self.final_layer_norm = layer_norm(self.config.hidden_dim)
         self.answer_prediction_layer = nn.Linear(in_features = self.config.hidden_dim, out_features=1)
 
