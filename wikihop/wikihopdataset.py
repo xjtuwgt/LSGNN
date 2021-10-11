@@ -93,8 +93,8 @@ class WikihopTrainDataSet(Dataset):
                  pad_id: int=None,
                  max_ans_num: int = 80,
                  max_seq_length: int = 4096,
-                 sent_drop_prob = 0.1,
-                 beta_drop_scale = 1.0):
+                 sent_drop_prob=0.1,
+                 beta_drop_scale=1.0):
         self.examples = examples
         self.sent_drop_prob = sent_drop_prob
         self.beta_drop_scale = beta_drop_scale
