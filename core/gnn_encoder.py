@@ -68,7 +68,6 @@ class GDTEncoder(nn.Module):
                 else:
                     node_embed = layer(graph, node_embed)
         return node_embed
-
 ####################################################
 #LSTM for sequence
 ####################################################
