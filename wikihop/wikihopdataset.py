@@ -111,7 +111,7 @@ class BetaWikiHopSpanDrop:
                     keep_spans.append(span)
             if len(keep_spans) > 0:
                 keep_spans_list.append(keep_spans)
-        if len(keep_spans_list) <= 2:  ## drop_supps_ids
+        if len(keep_spans_list) < 1:  ## drop_supps_ids
             return spans_list
         return keep_spans_list
 
@@ -132,7 +132,7 @@ class WikiHopSpanDrop:
                     keep_spans.append(span)
             if len(keep_spans) > 0:
                 keep_spans_list.append(keep_spans)
-        if len(keep_spans_list) <= 1:  ## drop_supps_ids
+        if len(keep_spans_list) < 1:  ## drop_supps_ids
             return spans_list
         return keep_spans_list
 
