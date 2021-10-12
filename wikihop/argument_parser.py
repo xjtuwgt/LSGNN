@@ -162,7 +162,7 @@ def default_parser():
     parser.add_argument('--negative_slope', type=float, default=1.0)
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     parser.add_argument('--eval_batch_size', type=int, default=32)
-    parser.add_argument('--per_gpu_train_batch_size', type=int, default=8)
+    parser.add_argument('--per_gpu_train_batch_size', type=int, default=16)
     # Environment+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     parser.add_argument('--cpu_num', type=int, default=8)
     parser.add_argument("--data_parallel", default='false', type=boolean_string, help="use data parallel or not")
