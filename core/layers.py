@@ -78,7 +78,7 @@ class RGDTLayer(nn.Module):
         self.attn_h = nn.Parameter(torch.FloatTensor(1, self._num_heads, self._head_dim), requires_grad=True)
         self.attn_t = nn.Parameter(torch.FloatTensor(1, self._num_heads, self._head_dim), requires_grad=True)
         self.attn_r = nn.Parameter(torch.FloatTensor(1, self._num_heads, self._head_dim), requires_grad=True)
-        self.leaky_relu = nn.LeakyReLU(negative_slope) ### for attention computation
+        self.prelu = nn.PReLU(init=negative_slope)
 
         if residual:
             if in_ent_feats != out_ent_feats:
@@ -149,7 +149,7 @@ class RGDTLayer(nn.Module):
             graph.srcdata.update({'ft': feat_head, 'eh': eh})
             graph.dstdata.update({'et': et})
             graph.apply_edges(fn.u_add_v('eh', 'et', 'e'))
-            e = self.leaky_relu(graph.edata.pop('e') + er) ### if the graph is sparse, we use leaky_relu, if the graph is not sparse, we make use of original values
+            e = self.prelu(graph.edata.pop('e') + er) ### if the graph is sparse, we use prelu, if the graph is not sparse, we make use of original values
             if self.ppr_diff:
                 graph.edata['a'] = edge_softmax(graph, e)
                 rst = self.ppr_estimation(graph=graph)
@@ -226,7 +226,7 @@ class GDTLayer(nn.Module):
 
         self.attn_h = nn.Parameter(torch.FloatTensor(1, self._num_heads, self._head_dim), requires_grad=True)
         self.attn_t = nn.Parameter(torch.FloatTensor(1, self._num_heads, self._head_dim), requires_grad=True)
-        self.leaky_relu = nn.LeakyReLU(negative_slope) ### for attention computation
+        self.prelu = nn.PReLU(init=negative_slope)  ### for attention computation
 
         if residual:
             if in_ent_feats != out_ent_feats:
@@ -291,7 +291,7 @@ class GDTLayer(nn.Module):
             graph.srcdata.update({'ft': feat_head, 'eh': eh})
             graph.dstdata.update({'et': et})
             graph.apply_edges(fn.u_add_v('eh', 'et', 'e'))
-            e = self.leaky_relu(graph.edata.pop('e'))
+            e = self.prelu(graph.edata.pop('e'))
             if self.ppr_diff:
                 graph.edata['a'] = edge_softmax(graph, e)
                 rst = self.ppr_estimation(graph=graph)
@@ -417,7 +417,6 @@ class TemporalBlock(nn.Module):
                                  self.conv2, self.chomp2, self.relu2, self.dropout2)
         self.downsample = nn.Conv1d(ni,nf,1) if ni != nf else None
         self.relu = nn.ReLU()
-        # initial_gain = small_init_gain(ni, nf)
         self.init_weights()
 
     def init_weights(self, gain=0.01):
@@ -460,7 +459,6 @@ class TCNWrapper(nn.Module):
         self.encoder = TemporalConvNet(c_in, layers, ks=ks, dropout=conv_dropout)
         self.dropout = nn.Dropout(fc_dropout) if fc_dropout else None
         self.linear = nn.Linear(layers[-1], c_out)
-        # initial_gain = small_init_gain(layers[-1], c_out)
         self.init_weights()
 
     def init_weights(self, gain=0.01):
