@@ -72,19 +72,69 @@ def example2sequence(query_ids, cands_ids, supps_ids, max_seq_len:int=None):
         assert len(seq_input_ids) <= max_seq_len
     return query_span, cand_spans, seq_input_ids, query_cand_len
 
-def sent_list_dropout(supps_ids: list, drop_ratio: float):
-    drop_supps_ids = []
-    for supps in supps_ids:
-        drop_supps = []
-        for sent_ids in supps:
-            random_num = random.random()
-            if random_num >= drop_ratio:
-                drop_supps.append(sent_ids)
-        if len(drop_supps) > 0:
-            drop_supps_ids.append(drop_supps)
-    if len(drop_supps_ids) <= 2: ## drop_supps_ids
-        return supps_ids
-    return drop_supps_ids
+# def sent_list_dropout(supps_ids: list, drop_ratio: float):
+#     drop_supps_ids = []
+#     for supps in supps_ids:
+#         drop_supps = []
+#         for sent_ids in supps:
+#             random_num = random.random()
+#             if random_num >= drop_ratio:
+#                 drop_supps.append(sent_ids)
+#         if len(drop_supps) > 0:
+#             drop_supps_ids.append(drop_supps)
+#     if len(drop_supps_ids) <= 2: ## drop_supps_ids
+#         return supps_ids
+#     return drop_supps_ids
+class BetaWikiHopSpanDrop:
+    def __init__(self, drop_ratio=0.1, beta_drop_scale=1.0, reverse=False):
+        self.drop_ratio = drop_ratio
+        self.beta_drop_scale = beta_drop_scale
+        a = max(1, self.drop_ratio / (1 - self.drop_ratio))
+        b = max(1, (1 - self.drop_ratio) / self.drop_ratio)
+        self.alpha = a * self.beta_drop_scale
+        self.beta = b * self.beta_drop_scale
+        if reverse:
+            self.alpha = b * self.beta_drop_scale
+            self.beta = a * self.beta_drop_scale
+
+    def __call__(self, spans_list: list):
+        if self.drop_ratio == 0.0:
+            return spans_list
+        keep_spans_list = []
+        # drop_prob = beta.rvs(self.alpha, self.beta)
+        for spans in spans_list:
+            keep_spans = []
+            drop_prob = beta.rvs(self.alpha, self.beta)
+            for span in spans:
+                random_num = random.random()
+                if random_num >= drop_prob:
+                    keep_spans.append(span)
+            if len(keep_spans) > 0:
+                keep_spans_list.append(keep_spans)
+        if len(keep_spans_list) <= 2:  ## drop_supps_ids
+            return spans_list
+        return keep_spans_list
+
+class WikiHopSpanDrop:
+    def __init__(self, drop_ratio=0.1):
+        self.drop_ratio = drop_ratio
+
+    def __call__(self, spans_list: list):
+        if self.drop_ratio == 0.0:
+            return spans_list
+        keep_spans_list = []
+        for spans in spans_list:
+            keep_spans = []
+            for span in spans:
+                random_num = random.random()
+                # print(random_num, self.drop_ratio)
+                if random_num >= self.drop_ratio:
+                    keep_spans.append(span)
+            if len(keep_spans) > 0:
+                keep_spans_list.append(keep_spans)
+        if len(keep_spans_list) <= 1:  ## drop_supps_ids
+            return spans_list
+        return keep_spans_list
 
 class WikihopTrainDataSet(Dataset):
     def __init__(self, examples,
@@ -98,6 +148,7 @@ class WikihopTrainDataSet(Dataset):
         self.examples = examples
         self.sent_drop_prob = sent_drop_prob
         self.beta_drop_scale = beta_drop_scale
+        self.span_drop_func = BetaWikiHopSpanDrop(drop_ratio=self.sent_drop_prob, beta_drop_scale=self.beta_drop_scale)
         self.window_size = window_size
         self.max_ans_num = max_ans_num
         self.max_seq_length = max_seq_length
@@ -111,13 +162,14 @@ class WikihopTrainDataSet(Dataset):
         example = self.examples[idx]
         example_id, answer_label_idx = example['id'], example['ans_idx']
         query_ids, cands_ids, supps_ids = example['q_ids'], example['cand_ids'], example['doc_ids']
-        if self.sent_drop_prob > 0:
-            a = max(1, self.sent_drop_prob / (1 - self.sent_drop_prob))
-            b = max(1, (1 - self.sent_drop_prob) / self.sent_drop_prob)
-            sent_drop_prob = beta.rvs(a * self.beta_drop_scale, b * self.beta_drop_scale)
-            drop_supps_ids = sent_list_dropout(supps_ids=supps_ids, drop_ratio=sent_drop_prob)
-        else:
-            drop_supps_ids = supps_ids
+        drop_supps_ids = self.span_drop_func(spans_list=supps_ids)
+        # if self.sent_drop_prob > 0:
+        #     a = max(1, self.sent_drop_prob / (1 - self.sent_drop_prob))
+        #     b = max(1, (1 - self.sent_drop_prob) / self.sent_drop_prob)
+        #     sent_drop_prob = beta.rvs(a * self.beta_drop_scale, b * self.beta_drop_scale)
+        #     drop_supps_ids = sent_list_dropout(supps_ids=supps_ids, drop_ratio=sent_drop_prob)
+        # else:
+        #     drop_supps_ids = supps_ids
         query_span, cand_spans, seq_input_ids, query_cand_len = example2sequence(query_ids=query_ids, cands_ids=cands_ids,
                                                                                  supps_ids=drop_supps_ids, max_seq_len=self.max_seq_length)
         cand_ans_num = len(cand_spans)

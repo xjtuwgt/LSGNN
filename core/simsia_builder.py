@@ -1,5 +1,4 @@
 import torch.nn as nn
-
 class SimSiam(nn.Module):
     """
     Build a SimSiam model.
@@ -10,11 +9,9 @@ class SimSiam(nn.Module):
         pred_dim: hidden dimension of the predictor (default: 512)
         """
         super(SimSiam, self).__init__()
-        # create the encoder
-        self.base_encoder = base_encoder
-        # build a 3-layer projector
+        # create the encoder = base_encoder + a 3-layer projector
         self.prev_dim = base_encoder_out_dim
-        self.encoder = nn.Sequential(self.base_encoder,
+        self.encoder = nn.Sequential(base_encoder,
                                         nn.Linear(self.prev_dim, self.prev_dim, bias=False),
                                         nn.BatchNorm1d(self.prev_dim),
                                         nn.ReLU(inplace=True), # first layer
@@ -50,3 +47,7 @@ class SimSiam(nn.Module):
 
 if __name__ == '__main__':
     print('*' * 30)
+    base_encoder = nn.Linear(100, 300)
+    pretrained_encoder = SimSiam(base_encoder, 300)
+
+    print(pretrained_encoder)
